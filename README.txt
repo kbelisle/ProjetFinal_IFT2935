@@ -1,13 +1,13 @@
 Avant de commencer :
 
 Windows seulement
--Ajouter le répertoire php dans ce répertoire (s'il y a lieu)
--Télécharger php 7.1 et l'ajouter au répertoire php
--Ajouter au répertoire php/ext/ les 3 dlls du répertoire ProjetFinal_API/pgsql
+-Ajouter le rÃ©pertoire php dans ce rÃ©pertoire (s'il y a lieu)
+-TÃ©lÃ©charger php 7.1 et l'ajouter au rÃ©pertoire php
+-Ajouter au rÃ©pertoire php/ext/ les 3 dlls du rÃ©pertoire ProjetFinal_API/pgsql
 
 
 Pour lancer le serveur :
 
 Executer le fichier ProjetFinal_API/serverstart.bat
-Une fois démarrer, l'API est accessible, par défaut : http://localhost:8123
+Une fois dÃ©marrer, l'API est accessible, par dÃ©faut : http://localhost:8132
 
