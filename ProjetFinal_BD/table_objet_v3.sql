@@ -4,7 +4,7 @@ DROP SCHEMA IF EXISTS projet CASCADE;
 CREATE SCHEMA IF NOT EXISTS projet AUTHORIZATION CURRENT_USER;
 
 CREATE TABLE projet.utilisateur (
-	iduser	SERIAL PRIMARY KEY,
+	iduser	INTEGER PRIMARY KEY,
 	prenom	VARCHAR(35) NOT NULL,
 	nom	VARCHAR(35) NOT NULL,
 	email 	VARCHAR(255) UNIQUE,
@@ -56,6 +56,28 @@ CREATE TABLE projet.partage (
 
 COMMIT;
 
+/*Data*/
+
+/*BEGIN;
+
+COMMIT;*/
+
+/*SET SERIAL BACK AFTER ADDING DATA*/
+BEGIN;
+
+/*Utilisateur*/
+CREATE SEQUENCE projet.utilisateur_id_seq;
+ALTER TABLE projet.utilisateur ALTER COLUMN iduser SET DEFAULT nextval('projet.utilisateur_id_seq');
+ALTER SEQUENCE projet.utilisateur_id_seq OWNED BY projet.utilisateur.iduser;
+SELECT setval('projet.utilisateur_id_seq', 1); --Set this to MAX(id) + 1
+
+/*Objet*/
+CREATE SEQUENCE projet.objet_id_seq;
+ALTER TABLE projet.objet ALTER COLUMN idobj SET DEFAULT nextval('projet.objet_id_seq');
+ALTER SEQUENCE projet.objet_id_seq OWNED BY projet.objet.idobj;
+SELECT setval('projet.objet_id_seq', 1); --Set this to MAX(id) + 1
+
+COMMIT;
 
 /*
 Connection string
