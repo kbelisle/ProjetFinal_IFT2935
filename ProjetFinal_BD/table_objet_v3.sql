@@ -1,20 +1,30 @@
 BEGIN;
 
-DROP TABLE projet.partage;
-DROP TABLE projet.feature;
-DROP TABLE projet.objet;
-DROP TABLE projet.categorie;
-DROP TABLE projet.utilisateur;
-
+DROP SCHEMA IF EXISTS projet CASCADE;
+CREATE SCHEMA IF NOT EXISTS projet AUTHORIZATION CURRENT_USER;
 
 CREATE TABLE projet.utilisateur (
-	iduser integer primary key
+	iduser	SERIAL PRIMARY KEY,
+	prenom	VARCHAR(35) NOT NULL,
+	nom	VARCHAR(35) NOT NULL,
+	email 	VARCHAR(255) UNIQUE,
+	adresse VARCHAR(255)
 );
+
 CREATE TABLE projet.categorie(
 	ncat	varchar(64) primary key,
 	pcat 	varchar(64),
 	foreign key (pcat) references projet.categorie(ncat)
 );
+
+CREATE TABLE projet.prefere (
+	iduser 	INTEGER,
+	ncat    VARCHAR(64),
+	PRIMARY KEY (iduser, ncat),
+	FOREIGN KEY (iduser) REFERENCES projet.utilisateur(iduser),
+	FOREIGN KEY (ncat) REFERENCES projet.categorie(ncat)
+);
+
 CREATE TABLE projet.objet (
 	idobj	integer primary key,
 	name	varchar(64),
