@@ -8,7 +8,6 @@ CREATE TABLE projet.utilisateur (
 	prenom	VARCHAR(35) NOT NULL,
 	nom	VARCHAR(35) NOT NULL,
 	email 	VARCHAR(255) UNIQUE,
-	
 	adresse VARCHAR(255)
 );
 
