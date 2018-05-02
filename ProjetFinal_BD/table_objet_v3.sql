@@ -4,7 +4,7 @@ DROP SCHEMA IF EXISTS projet CASCADE;
 CREATE SCHEMA IF NOT EXISTS projet AUTHORIZATION CURRENT_USER;
 
 CREATE TABLE projet.utilisateur (
-	iduser	INTEGER PRIMARY KEY,
+	iduser	SERIAL PRIMARY KEY,
 	prenom	VARCHAR(35) NOT NULL,
 	nom	VARCHAR(35) NOT NULL,
 	email 	VARCHAR(255) UNIQUE,
@@ -57,53 +57,6 @@ CREATE TABLE projet.partage (
 );
 
 COMMIT;
-
-/*SET SERIAL BACK AFTER ADDING DATA*/
-BEGIN;
-
-/*Utilisateur*/
-CREATE SEQUENCE projet.utilisateur_id_seq MINVALUE -1;
-ALTER TABLE projet.utilisateur ALTER COLUMN iduser SET DEFAULT nextval('projet.utilisateur_id_seq');
-ALTER SEQUENCE projet.utilisateur_id_seq OWNED BY projet.utilisateur.iduser;
-     SELECT setval('projet.utilisateur_id_seq', -1); --Set this to MAX(id) + 1
-
-/*Objet*/
-CREATE SEQUENCE projet.objet_id_seq;
-ALTER TABLE projet.objet ALTER COLUMN idobj SET DEFAULT nextval('projet.objet_id_seq');
-ALTER SEQUENCE projet.objet_id_seq OWNED BY projet.objet.idobj;
-SELECT setval('projet.objet_id_seq', 5); --Set this to MAX(id) + 1
-
-COMMIT;
-
-/*Views*/
-CREATE VIEW projet.categorie_listing AS
-SELECT n1cat as "ncat", p1cat as "pcat", niv as "niveau",
-		niv1_parent,niv2_parent,niv3_parent,niv4_parent,niv5_parent
-FROM (
-SELECT *,
-RANK() OVER(ORDER BY niv1_parent NULLS FIRST) as "rank1",
-RANK() OVER(PARTITION BY niv1_parent ORDER BY niv2_parent NULLS FIRST) as "rank2",
-RANK() OVER(PARTITION BY niv1_parent,niv2_parent ORDER BY niv3_parent NULLS FIRST) as "rank3",
-RANK() OVER(PARTITION BY niv1_parent,niv2_parent,niv3_parent ORDER BY niv4_parent NULLS FIRST) as "rank4",
-RANK() OVER(PARTITION BY niv1_parent,niv2_parent,niv3_parent,niv4_parent ORDER BY niv5_parent NULLS FIRST) as "rank5"
-FROM (
-SELECT n1cat, p1cat, niv,
-CASE WHEN niv = 1 THEN n1cat WHEN niv = 2 THEN n2cat WHEN niv = 3 THEN n3cat WHEN niv = 4 THEN n4cat ELSE p5cat END as "niv1_parent",
-CASE WHEN niv = 2 THEN n1cat WHEN niv = 3 THEN n2cat WHEN niv = 4 THEN n3cat WHEN niv = 5 THEN p4cat END as "niv2_parent",
-CASE WHEN niv = 3 THEN n1cat WHEN niv = 4 THEN n2cat WHEN niv = 5 THEN p3cat END as "niv3_parent",
-CASE WHEN niv = 4 THEN n1cat WHEN niv = 5 THEN p2cat END as "niv4_parent",
-CASE WHEN niv = 5 THEN n1cat END as "niv5_parent"
-FROM (
-SELECT t1.ncat as "n1cat",t2.ncat as "n2cat",t3.ncat as "n3cat",t4.ncat as "n4cat",t5.ncat as "n5cat",
-        t1.pcat as "p1cat",t2.ncat as "p2cat",t3.ncat as "p3cat",t4.ncat as "p4cat",t5.ncat as "p5cat",
-CASE WHEN t1.pcat IS NULL THEN 1 WHEN t2.pcat IS NULL THEN 2 WHEN t3.pcat IS NULL THEN 3 WHEN t4.pcat IS NULL THEN 4 ELSE 5 END as "niv"
-FROM projet.categorie t1
-LEFT JOIN projet.categorie t2 ON t1.pcat = t2.ncat
-LEFT JOIN projet.categorie t3 ON t2.pcat = t3.ncat
-LEFT JOIN projet.categorie t4 ON t3.pcat = t4.ncat
-LEFT JOIN projet.categorie t5 ON t4.pcat = t5.ncat
-) t ) t
-ORDER BY rank1,rank2,rank3,rank4,rank5) t;
 
 /*Data*/
 BEGIN;
@@ -175,35 +128,76 @@ INSERT INTO projet.utilisateur (prenom, nom, email, adresse) VALUES
 ('Dominic', 'Quenneville', 'dominicquenneville@jourrapide.com', '2877 St Jean Baptiste, Saint-Cap-aux-Meules, QC, Canada');
 
 INSERT INTO projet.prefere (iduser, ncat) VALUES
-(0, 'Électronique'),
-(1, 'Portable'),
-(1, 'Mobile'),
-(2, 'Accessoires PC'),
-(3, 'Électronique'),
-(4, 'Accessoires Mobile'),
-(4, 'Accessoires PC'),
-(5, 'PC'),
-(6, 'Mobile'),
-(7, 'Portable'),
-(8, 'PC'),
+(1, 'Électronique'),
+(2, 'Portable'),
+(2, 'Mobile'),
+(3, 'Accessoires PC'),
+(4, 'Électronique'),
+(5, 'Accessoires Mobile'),
+(5, 'Accessoires PC'),
+(6, 'PC'),
+(7, 'Mobile'),
+(8, 'Portable'),
 (9, 'PC'),
-(10, 'Électronique'),
-(11, 'Portable'),
-(11, 'Chargeur'),
-(12, 'Accessoires PC'),
-(13, 'Accessoires Mobile'),
-(14, 'PC'),
-(15, 'Chargeur'),
-(16, 'Portable'),
-(16, 'PC'),
-(17, 'Électronique'),
-(18, 'Accessoires PC'),
-(19, 'PC'),
-(20, 'Mobile'),
-(21, 'Électronique'),
+(10, 'PC'),
+(11, 'Électronique'),
+(12, 'Portable'),
+(12, 'Chargeur'),
+(13, 'Accessoires PC'),
+(14, 'Accessoires Mobile'),
+(15, 'PC'),
+(16, 'Chargeur'),
+(17, 'Portable'),
+(17, 'PC'),
+(18, 'Électronique'),
+(19, 'Accessoires PC'),
+(20, 'PC'),
+(21, 'Mobile'),
 (22, 'Électronique'),
-(23, 'Mobile');
+(23, 'Électronique'),
+(24, 'Mobile');
 COMMIT;
+
+/*SET SERIAL BACK AFTER ADDING DATA*/
+BEGIN;
+
+/*Objet*/
+CREATE SEQUENCE projet.objet_id_seq;
+ALTER TABLE projet.objet ALTER COLUMN idobj SET DEFAULT nextval('projet.objet_id_seq');
+ALTER SEQUENCE projet.objet_id_seq OWNED BY projet.objet.idobj;
+SELECT setval('projet.objet_id_seq', 5); --Set this to MAX(id) + 1
+
+COMMIT;
+
+/*Views*/
+CREATE VIEW projet.categorie_listing AS
+SELECT n1cat as "ncat", p1cat as "pcat", niv as "niveau",
+		niv1_parent,niv2_parent,niv3_parent,niv4_parent,niv5_parent
+FROM (
+SELECT *,
+RANK() OVER(ORDER BY niv1_parent NULLS FIRST) as "rank1",
+RANK() OVER(PARTITION BY niv1_parent ORDER BY niv2_parent NULLS FIRST) as "rank2",
+RANK() OVER(PARTITION BY niv1_parent,niv2_parent ORDER BY niv3_parent NULLS FIRST) as "rank3",
+RANK() OVER(PARTITION BY niv1_parent,niv2_parent,niv3_parent ORDER BY niv4_parent NULLS FIRST) as "rank4",
+RANK() OVER(PARTITION BY niv1_parent,niv2_parent,niv3_parent,niv4_parent ORDER BY niv5_parent NULLS FIRST) as "rank5"
+FROM (
+SELECT n1cat, p1cat, niv,
+CASE WHEN niv = 1 THEN n1cat WHEN niv = 2 THEN n2cat WHEN niv = 3 THEN n3cat WHEN niv = 4 THEN n4cat ELSE p5cat END as "niv1_parent",
+CASE WHEN niv = 2 THEN n1cat WHEN niv = 3 THEN n2cat WHEN niv = 4 THEN n3cat WHEN niv = 5 THEN p4cat END as "niv2_parent",
+CASE WHEN niv = 3 THEN n1cat WHEN niv = 4 THEN n2cat WHEN niv = 5 THEN p3cat END as "niv3_parent",
+CASE WHEN niv = 4 THEN n1cat WHEN niv = 5 THEN p2cat END as "niv4_parent",
+CASE WHEN niv = 5 THEN n1cat END as "niv5_parent"
+FROM (
+SELECT t1.ncat as "n1cat",t2.ncat as "n2cat",t3.ncat as "n3cat",t4.ncat as "n4cat",t5.ncat as "n5cat",
+        t1.pcat as "p1cat",t2.ncat as "p2cat",t3.ncat as "p3cat",t4.ncat as "p4cat",t5.ncat as "p5cat",
+CASE WHEN t1.pcat IS NULL THEN 1 WHEN t2.pcat IS NULL THEN 2 WHEN t3.pcat IS NULL THEN 3 WHEN t4.pcat IS NULL THEN 4 ELSE 5 END as "niv"
+FROM projet.categorie t1
+LEFT JOIN projet.categorie t2 ON t1.pcat = t2.ncat
+LEFT JOIN projet.categorie t3 ON t2.pcat = t3.ncat
+LEFT JOIN projet.categorie t4 ON t3.pcat = t4.ncat
+LEFT JOIN projet.categorie t5 ON t4.pcat = t5.ncat
+) t ) t
+ORDER BY rank1,rank2,rank3,rank4,rank5) t;
 
 /*
 Connection string
