@@ -1,7 +1,7 @@
 <?php
 
 function getAllCategories($conn) {
-    $result = pg_query($conn, "SELECT * FROM projet.categorie");
+    $result = pg_query($conn, "SELECT ncat,pcat,niveau FROM projet.categorie_listing");
     if (!$result) {
         pg_close($conn);
         die (responseJson("5", "Error on request : Categorie/All", "[]"));
