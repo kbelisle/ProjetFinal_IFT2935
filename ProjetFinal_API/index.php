@@ -1,9 +1,12 @@
 <?php include "utility.php" ?>
 <?php include "DAL.php" ?>
 <?php
+/* Allow localhost to call localhost*/
+header("Access-Control-Allow-Origin: *");
+header('Content-Type: application/json');
+
 /* Deny access to all pages except this one in .htaccess */
 // get the HTTP method, path and body of the request
-header('Content-Type: application/json');
 $method = $_SERVER['REQUEST_METHOD'];
 
 if(isset($_SERVER['PATH_INFO']))
