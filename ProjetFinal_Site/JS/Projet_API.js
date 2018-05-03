@@ -12,7 +12,6 @@ $(document).ready(function() {
     $('#filtreIcon').addClass('fa-chevron-up');
 	$('#filtreIcon').removeClass('fa-chevron-down');
   });
-  searchFilter();
 });
 
 function getAllCategories() {
@@ -27,25 +26,25 @@ function getAllCategories() {
 			loadFiltre(data.data);
 		  }
 		}
-	})
+	});
 }
 
 
 function searchFilter() {
-	var name = $('#txtNom').val();
-	var ncat = $('#categorieFilter').val();
-	
+	var txtNom = $('#txtNom').val();
+	var txtCat = $('#categorieFilter').val();
 	$.ajax({
-		url : CALLBACK_CONNECTION_STRING + "/search",
+		url : CALLBACK_CONNECTION_STRING + "/filterSearch",
 		method: 'GET',
-		dataType : 'json'
+		dataType : 'json',
+		data: {name:txtNom, categorie:txtCat}
 	}).done(function(data) {
 		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
 		  if(data.errCode == 0) {
 			loadObjetList(data.data);
 		  }
 		}
-	})
+	});
 }
 
 function loadMenu(categories) {
@@ -64,7 +63,72 @@ function loadFiltre(categories) {
 }
 
 function loadObjetList(objets) {
-
+	$('#accordion').html('');
+	
+	if(!objets || objets.length == 0) {
+		$('<h1>').attr('style','text-align:center;margin-top:20px;').text('Aucun Résultat').appendTo($('#accordion'));
+	}
+	else {
+		for(var i = 0; i < objets.length; i++) {
+			createEmptyCard(objets[i].idobj,objets[i].name,objets[i].odesc,objets[i].features);
+		}	
+	}
 }
 
-  
+function createEmptyCard(idobj,name,desc,features) {
+	var accordion = $('#accordion');
+	var card = $('<div>', {
+		class: 'card'
+	}).appendTo(accordion);
+	var card_header = $('<div>', {
+		class: 'card-header',
+		id: 'heading_' + idobj
+	}).appendTo(card);
+	var card_header_h5 = $('<h5>', {
+		class: 'mb-0'
+	}).appendTo(card_header);
+	var card_header_h5_button = $('<button>', {
+		class: 'btn btn-link',
+		style: 'text-decoration:none;',
+		text: name	
+	}).attr('data-toggle', 'collapse')
+	.attr('data-target', '#collapse_' + idobj)
+	.attr('aria-expanded', 'true')
+	.attr('aria-controls', 'collapse_' + idobj)
+	.appendTo(card_header_h5);
+	var collapse = $('<div>', {
+		id: 'collapse_' + idobj,
+		class: 'collapse'
+	})
+	.attr('aria-labelledby','heading_' + idobj)
+	.attr('data-parent','#accordion')
+	.appendTo(card);
+	var card_body = $('<div>', {
+		class: 'card-body'
+	}).appendTo(collapse);
+	var card_body_desc = $('<div>', {
+		class: 'first-group-accordion'	
+	}).html(desc).appendTo(card_body);
+	var card_body_features = $('<div>').appendTo(card_body);
+	var card_body_features_h4 = $('<h4>', {
+		text: 'Features'
+	}).appendTo(card_body_features);
+	if (features && features.length > 0) {
+		var card_body_features_table = $('<table>',{
+			class: 'table table-striped'
+		}).appendTo(card_body);
+		card_body_features_table.append('<tr><th colspan="2">Features</th></tr>');
+		for (var i = 0; i < features.length; i++) {
+			var card_body_features_table_tr = $('<tr>').appendTo(card_body_features_table);
+			$('<td>',{
+				text: features[i].fname
+			}).appendTo(card_body_features_table_tr);
+			var td2 = $('<td>',{
+				text: features[i].fvalue
+			}).appendTo(card_body_features_table_tr);
+		}
+	}
+	else {
+		$('<p>').text('Aucune feature disponible pour cet objet').appendTo(card_body);
+	}
+}

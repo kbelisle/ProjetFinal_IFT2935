@@ -34,8 +34,8 @@ CREATE TABLE projet.objet (
 );
 
 CREATE TABLE projet.feature (
-	idobj int,
-	fname varchar(64),
+	idobj int NOT NULL,
+	fname varchar(64) NOT NULL,
 	fvalue varchar(255),
 	primary key (idobj,fname),
 	foreign key (idobj) references projet.objet(idobj) ON DELETE CASCADE
@@ -165,7 +165,7 @@ BEGIN;
 CREATE SEQUENCE projet.objet_id_seq;
 ALTER TABLE projet.objet ALTER COLUMN idobj SET DEFAULT nextval('projet.objet_id_seq');
 ALTER SEQUENCE projet.objet_id_seq OWNED BY projet.objet.idobj;
-SELECT setval('projet.objet_id_seq', 5); --Set this to MAX(id) + 1
+SELECT setval('projet.objet_id_seq', 5); --Set this to MAX(id)
 
 COMMIT;
 

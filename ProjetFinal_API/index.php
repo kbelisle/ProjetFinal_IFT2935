@@ -14,14 +14,6 @@ if(isset($_SERVER['PATH_INFO']))
 else
     die(responseJson("3", "Empty Request", "[]"));
 
-//Get Json Input
-$input = json_decode(file_get_contents('php://input'),true);
-//Uncomment to only receive JSON data
-/*if (json_last_error() != JSON_ERROR_NONE) {
-    //Error on DATA
-    die(responseJson("2", "Wrong Data Type", "[]"));
-}*/
-
 /*Validation des requêtes ici*/
 
 /* Fill Data*/
@@ -66,6 +58,17 @@ else if($request_count > 0 && $request[0] == "objet") {
         /* Invalide */
         pg_close($DB);
         die(responseJson("4", "Invalid Argument for objet", "[]"));
+    }
+}
+elseif ($request_count == 1 && $request[0] == "filterSearch" && $method == 'GET') {
+    /* Validate Input */
+    if(isset($_GET['name']) && isset($_GET['categorie'])) {
+        $data = filterSearch($DB,$_GET['name'],$_GET['categorie']);
+        pg_close($DB);
+    }
+    else {
+        pg_close($DB);
+        die(responseJson("7", "Invalid Input for search", "[]"));
     }
 }
 else {

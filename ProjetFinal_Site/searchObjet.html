@@ -19,6 +19,11 @@
       body {
         padding-top: 54px;
       }
+
+	  .first-group-accordion {
+			margin-bottom:20px;
+		}
+	  
       @media (min-width: 992px) {
         body {
           padding-top: 56px;
@@ -86,13 +91,13 @@
 			<div class="panel-body">
 				<form action="javascript:searchFilter()">
 				  <div class="form-group">
-					<label for="txtNom">Recherche par nom</label>
-					<input type="text" class="form-control" id="txtNom" placeholder="Recherche par nom...">
-				  </div>
-				  <div class="form-group">
-					<label for="exampleSelect1">Catégorie</label>
+					<label for="categorieFilter">Catégorie</label>
 					<select class="form-control" id="categorieFilter">
 					</select>
+				  </div>
+				  <div class="form-group">
+					<label for="txtNom">Recherche par nom</label>
+					<input type="text" class="form-control" id="txtNom" placeholder="Recherche par nom...">
 				  </div>
 				  <button type="submit" class="btn btn-primary">Appliquer</button>
 				</form>
@@ -100,6 +105,7 @@
 		  </div>
 		</div>
 	  </div>
+	  <div id="accordion"></div>
 	</div>
 
     <!-- Bootstrap core JavaScript -->
