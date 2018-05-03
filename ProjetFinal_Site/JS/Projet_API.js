@@ -22,7 +22,8 @@ function getAllCategories() {
 	}).done(function(data) {
 		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
 		  if(data.errCode == 0) {
-			loadMenu(data.data);
+			loadMenu(data.data,1,0,$('#parentDropDown'));
+			BindNavMenu();
 			loadFiltre(data.data);
 		  }
 		}
@@ -30,7 +31,7 @@ function getAllCategories() {
 }
 
 
-function searchFilter() {
+function searchFilterObjet() {
 	var txtNom = $('#txtNom').val();
 	var txtCat = $('#categorieFilter').val();
 	$.ajax({
@@ -47,8 +48,29 @@ function searchFilter() {
 	});
 }
 
-function loadMenu(categories) {
-
+function loadMenu(categories,niv,index,parent) {
+	if(categories.length == 0) return;
+	var i = index;
+	do {
+		var li = $('<li>');
+		var a = $('<a>')
+		.attr('class', 'dropdown-item')
+		.attr('href','#')
+		.text(categories[i].ncat);
+		if( i + 1 < categories.length && categories[i+1].niveau > niv) {
+			a.addClass('dropdown-toggle');
+			var ul = $('<ul>').attr('class','dropdown-menu');
+			i = loadMenu(categories,categories[i+1].niveau,i+1,ul);
+			a.appendTo(li);
+			ul.appendTo(li);
+		}
+		else {
+			a.appendTo(li);
+		}
+		li.appendTo(parent);
+		i++;
+	}while(i < categories.length && categories[i].niveau >= niv);
+	return i-1;
 }
 
 function loadFiltre(categories) {
@@ -117,7 +139,6 @@ function createEmptyCard(idobj,name,desc,features) {
 		var card_body_features_table = $('<table>',{
 			class: 'table table-striped'
 		}).appendTo(card_body);
-		card_body_features_table.append('<tr><th colspan="2">Features</th></tr>');
 		for (var i = 0; i < features.length; i++) {
 			var card_body_features_table_tr = $('<tr>').appendTo(card_body_features_table);
 			$('<td>',{
