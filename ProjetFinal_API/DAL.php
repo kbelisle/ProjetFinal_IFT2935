@@ -58,6 +58,7 @@ function getObjetById($conn, $id) {
 }
 
 function filterSearch($conn, $name, $cat) {
+    $result = pg_query_params($conn, "SELECT projet.objet.idobj,name,ncat,odesc,fname,fvalue FROM projet.objet LEFT JOIN projet.feature ON projet.objet.idobj = projet.feature.idobj WHERE ncat = $1 AND position($2 in LOWER(name)) > 0", array($cat,strtolower($name)));
     if (!$result) {
         $error = pg_last_error($conn);
         pg_close($conn);
