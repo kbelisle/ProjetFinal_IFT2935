@@ -41,19 +41,27 @@ CREATE TABLE projet.feature (
 	foreign key (idobj) references projet.objet(idobj) ON DELETE CASCADE
 );
 
+CREATE TABLE projet.annonce (
+	idannonce SERIAL PRIMARY KEY,
+	idobj INTEGER,
+	idvendeur INTEGER,
+	datedebut DATE DEFAULT now(),
+	datefin DATE CHECK (datefin > datedebut OR datefin IS NULL),
+	description VARCHAR(255),
+	prix MONEY CHECK (prix >= cast(0.0 AS MONEY)),
+	qte INTEGER CHECK (qte >= 0),
+	FOREIGN KEY(idobj) REFERENCES projet.objet(idobj),
+	FOREIGN KEY(idvendeur) REFERENCES projet.utilisateur(iduser)
+);
+
 CREATE TABLE projet.partage (
-	idobj	integer,
-	idvend	integer,
-	idacht	integer,
-	qt	integer NOT NULL,
-	date	timestamp NOT NULL,
-	duree	interval,
-	prix	money,
-	lieu	varchar(255),
-	primary key (idobj, idvend, idacht),
-	foreign key (idobj) references projet.objet(idobj),
-	foreign key (idvend) references projet.utilisateur(iduser),
-	foreign key (idacht) references projet.utilisateur(iduser)
+	PRIMARY KEY(idacheteur, idannonce, date),
+	idacheteur INTEGER,
+	idannonce INTEGER,
+	date DATE,
+	FOREIGN KEY(idacheteur) REFERENCES projet.utilisateur(iduser),
+	FOREIGN KEY(idannonce) REFERENCES projet.annonce(idannonce)
+
 );
 
 COMMIT;
