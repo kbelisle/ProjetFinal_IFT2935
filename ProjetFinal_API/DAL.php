@@ -1,5 +1,6 @@
 <?php
 
+/*Obtient toutes les catégories et les retournent en JSON*/
 function getAllCategories($conn) {
     $result = pg_query($conn, "SELECT ncat,pcat,niveau FROM projet.categorie_listing");
     if (!$result) {
@@ -13,7 +14,7 @@ function getAllCategories($conn) {
     }
     return json_encode($data,JSON_UNESCAPED_UNICODE);
 }
-
+/*Obtient l'objet et ces features avec l'id associé*/
 function getObjetById($conn, $id) {
     $result = pg_query_params($conn, "SELECT * FROM projet.objet WHERE idobj = $1", array($id));
     if (!$result) {
@@ -57,6 +58,7 @@ function getObjetById($conn, $id) {
     return json_encode($data,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_LINE_TERMINATORS);
 }
 
+/*Obtient tous les objets et leurs features selon so $name fait partie de son nom et si il fait partie de la categorie $cat*/
 function filterSearch($conn, $name, $cat) {
     $result = pg_query_params($conn, "SELECT projet.objet.idobj,name,ncat,odesc,fname,fvalue FROM projet.objet LEFT JOIN projet.feature ON projet.objet.idobj = projet.feature.idobj WHERE ncat = $1 AND position($2 in LOWER(name)) > 0", array($cat,strtolower($name)));
     if (!$result) {
