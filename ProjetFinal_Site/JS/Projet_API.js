@@ -1,5 +1,6 @@
 var CALLBACK_CONNECTION_STRING = "http://localhost:8132";
 
+/*Page onload*/
 $(document).ready(function() {
 	getAllCategories();
 	
@@ -13,7 +14,7 @@ $(document).ready(function() {
 	$('#filtreIcon').removeClass('fa-chevron-down');
   });
 });
-
+/*obtient les categories ordonnés et les ajoutent au menu categorie dans la barre de navigation et dans le select du filtre.*/
 function getAllCategories() {
 	$.ajax({
 		url : CALLBACK_CONNECTION_STRING + "/categorie",
@@ -30,7 +31,7 @@ function getAllCategories() {
 	});
 }
 
-
+/*obtient les objets selon les choix dans le filtre et les affichent dans l'accordion.*/
 function searchFilterObjet() {
 	var txtNom = $('#txtNom').val();
 	var txtCat = $('#categorieFilter').val();
@@ -48,6 +49,7 @@ function searchFilterObjet() {
 	});
 }
 
+/*fonction recursive qui remplit le dropdown categorie dans la barre de navigation.*/
 function loadMenu(categories,niv,index,parent) {
 	if(categories.length == 0) return;
 	var i = index;
@@ -72,7 +74,7 @@ function loadMenu(categories,niv,index,parent) {
 	}while(i < categories.length && categories[i].niveau >= niv);
 	return i-1;
 }
-
+/* remplit le select du filtre.*/
 function loadFiltre(categories) {
 	for(var i = 0; i < categories.length; i++) {
 		var dash = "";
@@ -84,6 +86,7 @@ function loadFiltre(categories) {
 	}
 }
 
+/*Vide l'accordion et remplit selon le filtre*/
 function loadObjetList(objets) {
 	$('#accordion').html('');
 	
@@ -96,7 +99,7 @@ function loadObjetList(objets) {
 		}	
 	}
 }
-
+/*creer une carte de l'accordion et la remplit avec les données + features d'un objet*/
 function createEmptyCard(idobj,name,desc,features) {
 	var accordion = $('#accordion');
 	var card = $('<div>', {
