@@ -1,41 +1,47 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8"/>
-		<title>Projet Final Équipe 14 - Historique des ventes</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title>Projet Final Équipe 14 - Détail d'une annonce</title>
 		
 	    <!-- Bootstrap core CSS -->
 		<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+		<style>
+		h1 {
+			padding-top:10px;
+		}
+		</style>
 	</head>
 	<body>
 	
 		<!-- Navigation -->
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-		  <div class="container">
-			<a class="navbar-brand" href="#">Projet Final Équipe 14</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-			  <span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarResponsive">
-			  <ul class="navbar-nav ml-auto">
-				<li class="nav-item active">
-				  <a class="nav-link" href="#">Home
-					<span class="sr-only">(current)</span>
-				  </a>
-				</li>
-				<li class="nav-item">
-				  <a class="nav-link" href="#">About</a>
-				</li>
-				<li class="nav-item">
-				  <a class="nav-link" href="#">Services</a>
-				</li>
-				<li class="nav-item">
-				  <a class="nav-link" href="#">Contact</a>
-				</li>
-			  </ul>
-			</div>
-		  </div>
-		</nav>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+         <div class="container">
+            <a class="navbar-brand" href="#">Projet Final Équipe 14</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+               <ul class="navbar-nav ml-auto">
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Recherche de Partage
+                     </a>
+                     <ul id="parentDropDown" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        
+                     </ul>
+                  </li>
+                  <li class="nav-item active">
+                     <a class="nav-link" href="#">Recherche d'Objet
+                     <span class="sr-only">(current)</span></a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </nav>
 		
 		    <!-- Page Content -->
 		<div class="container">
@@ -48,21 +54,18 @@
 					
 					<div class="input-group mb-3">
 					  <select class="form-control" id="annonce_id"></select>
-					  <div class="input-group-append">
-						<button class="btn btn-outline-secondary" onclick="getAnnonce();" type="button">Rechercher</button>
-					  </div>
 					</div>
 					<p id="feedback"></p>
 					<label for="acheteur_id">Entrez l'ID d'un profiteur pour ajouter un partage en lien avec cette annonce</label>
 					<div class="input-group mb-3">
 					  <select disabled="true" class="form-control" id="acheteur_id"></select>
 					  <div class="input-group-append">
-						<button id="partage_button" disabled="true" class="btn btn-outline-secondary" onclick="addPartage();" type="button">Ajouter partage</button>
+						<button id="partage_button" disabled="true" class="btn btn-outline-secondary" onclick="addPartageClick();" type="button">Ajouter partage</button>
 					  </div>
 					</div>
 					
-					<button id="bouton_presentation" disabled="true" class="btn" onclick="getAnnonce();">Présentation</button>
-					<button id="bouton_features" disabled="true" class="btn" onclick="getFeatures();">Fiche technique</button>
+					<button id="bouton_presentation" disabled="true" class="btn" onclick="showAnnonce();">Présentation</button>
+					<button id="bouton_features" disabled="true" class="btn" onclick="showFeature();">Fiche technique</button>
 					
 					<div class="text-left" id="annonce_info">
 
@@ -115,8 +118,11 @@
 		<!-- Bootstrap core JavaScript -->
 		<script src="vendor/jquery/jquery.min.js"></script>
 		<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+		
 		<!--PHP API -->
 		<script src="JS/Projet_API.js"></script>
+		<!-- Page JS -->
+		<script src="JS/annonce_detail.js"></script>
 		
 	</body>
 </html>

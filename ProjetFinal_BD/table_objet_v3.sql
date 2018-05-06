@@ -1,4 +1,4 @@
-BEGIN;
+﻿BEGIN;
 
 DROP SCHEMA IF EXISTS projet CASCADE;
 CREATE SCHEMA IF NOT EXISTS projet AUTHORIZATION CURRENT_USER;
@@ -45,11 +45,11 @@ CREATE TABLE projet.annonce (
 	idannonce SERIAL PRIMARY KEY,
 	idobj INTEGER NOT NULL,
 	idvendeur INTEGER NOT NULL,
-	datedebut DATE DEFAULT now(),
-	datefin DATE CHECK (datefin > datedebut OR datefin IS NULL),
+	datedebut DATE NOT NULL DEFAULT now(),
+	datefin DATE CHECK (datefin IS NULL OR datefin > datedebut),
+	prix MONEY NOT NULL CHECK (prix >= cast(0.0 AS MONEY)),
+	qte INTEGER NOT NULL CHECK (qte > 0),
 	description VARCHAR(255),
-	prix MONEY CHECK (prix >= cast(0.0 AS MONEY)),
-	qte INTEGER CHECK (qte >= 0),
 	FOREIGN KEY(idobj) REFERENCES projet.objet(idobj),
 	FOREIGN KEY(idvendeur) REFERENCES projet.utilisateur(iduser)
 );
@@ -58,7 +58,7 @@ CREATE TABLE projet.partage (
 	PRIMARY KEY(idacheteur, idannonce, date),
 	idacheteur INTEGER,
 	idannonce INTEGER,
-	date DATE,
+	date DATE NOT NULL DEFAULT now(),
 	FOREIGN KEY(idacheteur) REFERENCES projet.utilisateur(iduser),
 	FOREIGN KEY(idannonce) REFERENCES projet.annonce(idannonce)
 );
@@ -74,7 +74,7 @@ INSERT INTO projet.categorie (ncat,pcat) VALUES ('PC','Électronique');
 INSERT INTO projet.categorie (ncat,pcat) VALUES ('Accessoires PC','PC');
 INSERT INTO projet.categorie (ncat,pcat) VALUES ('Mobile','Électronique');
 INSERT INTO projet.categorie (ncat,pcat) VALUES ('Accessoires Mobile','Mobile');
-INSERT INTO projet.categorie (ncat,pcat) VALUES ('Chargeur','Accessoires Mobile');
+INSERT INTO projet.categorie (ncat,pcat) VALUES ('Chargeur Mobile','Accessoires Mobile');
 INSERT INTO projet.categorie (ncat,pcat) VALUES ('Portable','Électronique');
 
 /* Objet */
@@ -92,7 +92,7 @@ VALUES
 (10, 'P710e Mobile Speakerphone', 'Accessoires Mobile', '<h4>Overview</h4>Transform any workspace into an instant conference room with the Logitech® P710e mobile speakerphone and your own smartphone or tablet. Ideal for users who work remotely from hotel rooms, home offices, or non-traditional workplace settings, as well as workers inside the enterprise, the P710e mobile speakerphone provides flexibility to conduct conference calls wherever you are. The integrated stand positions your mobile phone or tablet at just the right angle for shake-free video calls and hands-free access to the mobile screen'),
 (11, 'Asus VE278Q 27"', 'Accessoires PC', '<ul><li>Widescreen LED</li><li>27 in</li><li>Maximum resolution 1920x1080</li><li>Built-in Speakers</li><li>1 DVI port</li><li>1 HDMI port</li><li>1 VGA port</li></ul>'),
 (12, 'Kensington Pro Fit Wired Full-Size Mouse', 'Accessoires PC', '<h4>Overview</h4>Performance, comfort and reliability are critical in any office environment, the Pro Fit™ Wired Full-Size Mouse delivers this every working day. The full-size right-handed ergonomic design makes it ideal for prolonged use. Conveniently located browser navigation buttons and scrollwheel help users complete tasks quicker. Plug and Play wired USB or PS2 avoids setup pains.'),
-(13, 'THINKPAD 90W AC ADAPTER-X1CARBON', 'Chargeur', '<ul><li>Input Voltage: AC 100-240V</li><li>Fequency Required: 50/60 Hz</li><li>Power Capacity: 90 Watt</li></ul>'),
+(13, 'THINKPAD 90W AC ADAPTER-X1CARBON', 'Chargeur Mobile', '<ul><li>Input Voltage: AC 100-240V</li><li>Fequency Required: 50/60 Hz</li><li>Power Capacity: 90 Watt</li></ul>'),
 (14, 'Lenovo ThinkPad E570', 'Portable', '<h4>Survol</h4>Puissant et résistant, le ThinkPad E570 est assez léger pour vous emmener partout où vous faites affaires. Conçu pour améliorer la productivité, le portable de 15,6 po est lisse et doté d''un processeur rapide, d''un écran haute résolution et d''un clavier ergonomique en standard. Il peut également être configuré pour répondre au mieux à vos besoins d''affaires en matière de stockage, de mémoire, de graphiques et de budget.<h4>En savoir plus</h4><ul><li>processeur Intel® Core™ i5-7200U de 7e génération (cache de 3 Mo, jusqu''à 3,10 GHz)</li><li>Graphiques HD Intel® 620</li><li>Caméra de 720p</li><li>Jusqu''à 16 Go DDR4, 2133 MHz</li><li>500 Go, 7200 trs/min</li><li>256 GB PCIe SSD OPAL2.0</li><li>Écran HD de 15,6 po (1366 x 768) TN, non tactile</li></ul>'),
 (15, 'Ordinateur portable HP 255 G6', 'Portable', '<h4>Survol</h4>Travaillez en toute confiance grâce à l’ordinateur portable durable HP 255. Il est équipé pour le travail en entreprise et est prêt pour les déplacements, grâce à Windows 10 Professionnel1 et des APU AMD incroyablement puissants APU AMD. Profitez de cet ordinateur à un prix compétitif, doté d’outils de collaboration essentiels.<h4>En savoir plus</h4><ul><li>Windows 10</li><li>APU A6 AMD</li><li>8 Go RAM DDR4</li><li>Disque dur 5400tr/min de 500 Go</li><li>Écran de 15,6 po 1366x768</li></ul>'),
 (16, 'Adesso AKB-310UB Mini Keyboard - Optical Trackball', 'Accessoires PC', '<h4>Overview</h4>The Adesso AKB-310UB Mini Keyboard, combined with an integrated optical trackball, gives users control of their desktop. The integrated optical trackball delivers superior precision and smooth motion with virtually no maintenance or cleaning required. Measuring less than 12" wide and equipped with an embedded numeric keypad, the Adesso AKB-310UB Mini Keyboard is a great space saver for desktops in homes or offices. It is ideal for use in POS, kiosks, warehouses, manufacturing environments or in any small working area.'),
@@ -220,11 +220,11 @@ INSERT INTO projet.prefere (iduser, ncat) VALUES
 (10, 'PC'),
 (11, 'Électronique'),
 (12, 'Portable'),
-(12, 'Chargeur'),
+(12, 'Chargeur Mobile'),
 (13, 'Accessoires PC'),
 (14, 'Accessoires Mobile'),
 (15, 'PC'),
-(16, 'Chargeur'),
+(16, 'Chargeur Mobile'),
 (17, 'Portable'),
 (17, 'PC'),
 (18, 'Électronique'),
@@ -276,7 +276,7 @@ BEGIN;
 CREATE SEQUENCE projet.objet_id_seq;
 ALTER TABLE projet.objet ALTER COLUMN idobj SET DEFAULT nextval('projet.objet_id_seq');
 ALTER SEQUENCE projet.objet_id_seq OWNED BY projet.objet.idobj;
-SELECT setval('projet.objet_id_seq', 24); --Set this to MAX(id)
+SELECT setval('projet.objet_id_seq',18); --Set this to MAX(id)
 
 COMMIT;
 
@@ -317,6 +317,23 @@ LEFT JOIN projet.partage as "p" ON a.idannonce = p.idannonce
 WHERE (datefin IS NULL OR now() < a.datefin)
 GROUP BY (a.idannonce)
 HAVING COUNT(p.idannonce) < a.qte;
+
+CREATE OR REPLACE FUNCTION projet.getCategorieHierarchy(_name varchar)
+RETURNS TABLE (categorieValue varchar)
+AS $$
+BEGIN
+RETURN QUERY (
+	SELECT ncat
+	FROM projet.categorie_listing
+	WHERE niv1_parent = _name 
+	OR niv2_parent = _name 
+	OR niv3_parent = _name
+	OR niv4_parent = _name
+	OR niv5_parent = _name
+);
+END;
+$$ LANGUAGE plpgsql;
+
 
 /*
 Connection string

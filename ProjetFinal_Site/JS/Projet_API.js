@@ -2,26 +2,6 @@
 
 /*Page onload*/
 $(document).ready(function() {
-	getAllCategories();
-	
-	$("#create_user_form").submit(addUser);
-	$("#create_ad_form").submit(addAd);
-	
-	if($("#objet_categorie") !== undefined) 
-		initCategoriesSelectionForm($("#objet_categorie"));
-	
-	if($("#vendeur_id") !== undefined) 
-		initUserIDs($("#vendeur_id"));
-	
-	if($("#acheteur_id") !== undefined)
-		initUserIDs($("#acheteur_id"));
-	
-	if($("#annonce_id") !== undefined)
-		initAnnonceIDs($("#annonce_id"));
-	
-	if($("#utilisateur_preference") !== undefined)
-		initCategoriesSelectionForm($("#utilisateur_preference"));
-	
  $('.panel-collapse').on('show.bs.collapse', function () {
     $('#filtreIcon').removeClass('fa-chevron-up');
 	$('#filtreIcon').addClass('fa-chevron-down');
@@ -32,99 +12,86 @@ $(document).ready(function() {
 	$('#filtreIcon').removeClass('fa-chevron-down');
   });
 });
+/*searchobjet
+loadMenu(data.data,1,0,$('#parentDropDown'));
+BindNavMenu();
+loadFiltre(data.data);
+*/
 /*obtient les categories ordonnés et les ajoutent au menu categorie dans la barre de navigation et dans le select du filtre.*/
-function getAllCategories() {
+function getAllCategories(callbackFunction) {
 	$.ajax({
 		url : CALLBACK_CONNECTION_STRING + "/categorie",
 		method: 'GET',
 		dataType : 'json'
 	}).done(function(data) {
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data') && data.hasOwnProperty('errMsg')) {
 		  if(data.errCode == 0) {
-			loadMenu(data.data,1,0,$('#parentDropDown'));
-			BindNavMenu();
-			loadFiltre(data.data);
+			if(typeof callbackFunction === 'function') {
+			  callbackFunction(data.errCode,data.errMsg,data.data);
+			}
+		    /* Navbar related */
+		    loadMenu(data.data,1,0,$('#parentDropDown'));
+		    BindNavMenu();
 		  }
+		}
+		else {
+			if(typeof callbackFunction === 'function') {
+			  callbackFunction("999","Invalid JSON Format",[]);
+			}
 		}
 	});
 }
 
 function initCategoriesSelectionForm(selectionForm) {
-	
 	$.ajax({
 		url : CALLBACK_CONNECTION_STRING + "/categorie",
 		method : "GET",
 		dataType : "json"
-	}).done(function(data) {
-		
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
-			
+	}).done(function(data) {	
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {		
 			if(data.errCode == 0) {
-				
 				data.data.forEach((row) => {
-					
-					selectionForm.append('<option value="' + row.ncat + '">' + row.ncat + '</option>');
-					
+					selectionForm.append('<option value="' + row.ncat + '">' + row.ncat + '</option>');	
 				});
-				
 			}
-			
-		}
-		
+		}	
 	});
-	
 }
 
-function initAnnonceIDs(selectionForm) {
-	
+function getAnnonceList(callbackFunction) {
 	$.ajax({
 		url : CALLBACK_CONNECTION_STRING + "/ad",
 		method : "GET",
 		dataType : "json"
 	}).done(function(data) {
-		
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
-			
-			if(data.errCode == 0) {
-				
-				data.data.forEach((row) => {
-					
-					selectionForm.append('<option value="' + row.idannonce + '">' + row.idannonce + '</option>');
-					
-				});
-				
-			}
-			
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
+			if(typeof callbackFunction === 'function') {
+				callbackFunction(data.errCode,data.errMsg,data.data);
+			} 
 		}
-		
+		else {
+			if(typeof callbackFunction === 'function') {
+				callbackFunction("999","",[]);
+			} 
+		}
 	});
-	
 }
 
-function initUserIDs(selectionForm) {
+function getAllUserIDs(callbackFunction) {
 	
 	$.ajax({
 		url : CALLBACK_CONNECTION_STRING + "/utilisateur",
 		method : "GET",
 		dataType : "json"
 	}).done(function(data) {
-		
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
-			
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {	
 			if(data.errCode == 0) {
-				
-				data.data.forEach((row) => {
-					
-					selectionForm.append('<option value="' + row.iduser + '">' + row.iduser  + ' - ' + row.prenom + ' ' + row.nom + '</option>');
-					
-				});
-				
+				if(typeof callbackFunction === 'function') {
+				  callbackFunction(data.errCode,data.errMsg,data.data);
+				}
 			}
-			
 		}
-		
 	});
-	
 }
 
 function getAllAds() {
@@ -135,7 +102,7 @@ function getAllAds() {
 		dataType : "json"
 	}).done(function(data) {
 		
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
 			
 			if(data.errCode == 0) {
 				
@@ -153,13 +120,19 @@ function getPurchaseHistory() {
 	
 	const id = $("#acheteur_id").val(); 
 	
+	if (isNaN(id)) {
+		/* Someone changed the html! */
+		window.location.replace("index.html");
+		return false;
+	}
+	
 	$.ajax({
 		url : CALLBACK_CONNECTION_STRING + "/purchases/" + id,
 		method : "GET",
 		dataType : "json"
 	}).done(function(data) {
 		
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
 			
 			if(data.errCode == 0) {
 				
@@ -207,13 +180,19 @@ function getSaleHistory() {
 	
 	const id = $("#vendeur_id").val(); 
 	
+	if (isNaN(id)) {
+		/* Someone changed the html! */
+		window.location.replace("index.html");
+		return false;
+	}
+	
 	$.ajax({
 		url : CALLBACK_CONNECTION_STRING + "/sales/" + id,
 		method : "GET",
 		dataType : "json"
 	}).done(function(data) {
 		
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
 			
 			if(data.errCode == 0) {
 				
@@ -258,53 +237,18 @@ function getSaleHistory() {
 	
 }
 
-function getAnnonce() {
-
-	const id = $("#annonce_id").val();
-	
+function getAnnonceByID(annonceID, callbackFunction) {
 	$.ajax({
-		url : CALLBACK_CONNECTION_STRING + "/ad/" + id,
+		url : CALLBACK_CONNECTION_STRING + "/ad/" + annonceID,
 		method : "GET",
 		dataType : "json"
 	}).done(function(data) {
-		
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
-			
-			if(data.errCode == 0) {
-		
-				$("#annonce_features").hide();
-				$("#annonce_info").show();
-				
-				$("#annonce_titre").text('Annonce #' + data.data.annonce_id);
-				$("#objet_nom").text(data.data.objet_nom);
-				$("#objet_prix").text(data.data.prix);
-				$("#objet_qte").text(data.data.qte);
-				$("#date_debut").text(data.data.date_debut);
-				$("#date_fin").text(data.data.date_fin);
-				$("#vendeur_prenom").text(data.data.vendeur_prenom);
-				$("#vendeur_nom").text(data.data.vendeur_nom);
-				$("#vendeur_courriel").text(data.data.vendeur_email);
-				$("#vendeur_adresse").text(data.data.vendeur_adresse);
-				$("#objet_description").html(data.data.objet_description);
-				
-				$("#bouton_presentation").prop("disabled", true);
-				$("#bouton_features").prop("disabled", false);
-				$("#acheteur_id").prop("disabled", false);
-				$("#acheteur_id").prop("disabled", false);
-				$("#partage_button").prop("disabled", false);
-				
-			}
-			else {
-				
-				$("#annonce_titre").text("L'Annonce #" + id + " n'existe pas");
-				clearAnnonceInfos();
-				$("#bouton_presentation").prop("disabled", true);
-				$("#bouton_features").prop("disabled", true);
-				
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
+			if(typeof callbackFunction === 'function') {
+				callbackFunction(data.errCode,data.errMsg,data.data);
 			}
 		}
 	});
-	
 }
 
 function clearAnnonceInfos() {
@@ -322,152 +266,86 @@ function clearAnnonceInfos() {
 	
 }
 
-function getFeatures() {
-	
-	const id = $("#annonce_id").val();
-	
+function getFeaturesByAnnonceID(annonceID,callbackFunction) {
 	$.ajax({
-		url : CALLBACK_CONNECTION_STRING + "/features/" + id,
+		url : CALLBACK_CONNECTION_STRING + "/features/" + annonceID,
 		method : "GET",
 		dataType : "json"
 	}).done(function(data) {
-		
-		$("#annonce_info").hide();
-		$("#annonce_features").show();
-		
-		$("#annonce_features").html("");
-		
-		data.data.forEach((row) => {
-			
-			var rowHTML = "<p><strong>" + row.feature_nom + ": </strong>" + row.feature_valeur + "</p>";
-			
-			$("#annonce_features").append(rowHTML);
-			$("#bouton_presentation").prop("disabled", false);
-			$("#bouton_features").prop("disabled", true);
-			
-		});
-		
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
+			if(typeof callbackFunction === 'function') {
+				callbackFunction(data.errCode, data.errMsg, data.data);
+			}
+		}
+		else {
+			if(typeof callbackFunction === 'function') {
+				callbackFunction("999", "Invalid JSON on response", []);
+			}
+		}
 	});
 	
 }
 
-function addUser(ev) {
-	
-	ev.preventDefault();
-	
-	const prenom = $("#utilisateur_prenom").val();
-	const nom = $("#utilisateur_nom").val();
-	const email = $("#utilisateur_courriel").val();
-	const adresse = $("#utilisateur_adresse").val();
-	const preference = $("#utilisateur_preference").val();
-	
+function addUser(prenom,nom,email,adresse,preference,callbackFunction) {
 	$.ajax({
 		type: "POST",
 		url: CALLBACK_CONNECTION_STRING + "/utilisateur",
 		data: {"prenom":prenom,"nom":nom,"email":email,"adresse":adresse,"preference":preference},
 		dataType: "json",
-		error: (response) => { $("#feedback").text("L'utilisateur n'a pas pu être créé."); }
-	}).done((data) => {
-			
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
-			
-			if(data.errCode == 0) {
-				
-				$("#utilisateur_prenom").val("");
-				$("#utilisateur_nom").val("");
-				$("#utilisateur_courriel").val("");
-				$("#utilisateur_adresse").val("");
-				
-				$("#feedback").text("L'utilisateur a été créé avec succès.");
-				
+	}).done((data) => {	
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
+			if(typeof callbackFunction === 'function') {
+				callbackFunction(data.errCode,data.errMsg,data.data);
 			}
-			else {
-
-				$("#feedback").text("L'utilisateur n'a pas pu être créé.");
-				
+		}
+		else {
+			if(typeof callbackFunction === 'function') {
+				callbackFunction("999","Invalid JSON Format",[]);
 			}
-		
 		}
 	});
-	
 }
 
-function addAd(ev) {
-	
-	ev.preventDefault();
-	
-	const vendeurID = $("#vendeur_id").val();
-	const objet_nom = $("#objet_nom").val();
-	const objet_categorie = $("#objet_categorie").val();
-	const objet_qte = $("#objet_qte").val();
-	const objet_prix = $("#objet_prix").val();
-	const annonce_date_fin = $("#annonce_date_fin").val();
-	const objet_description = $("#objet_description").val();
-	
+function addAd(vendeurID, objNom, objCat, objQte, objPrix, dateFin, objDesc, callbackFunction) {
 	$.ajax({
 		type: "POST",
 		url: CALLBACK_CONNECTION_STRING + "/ad",
-		data: {"objet_description":objet_description,"vendeur_id":vendeurID,"objet_nom":objet_nom,"objet_categorie":objet_categorie,"objet_qte":objet_qte, "objet_prix":objet_prix, "annonce_date_fin":annonce_date_fin},
+		data: {"objet_description":objDesc,"vendeur_id":vendeurID,"objet_nom":objNom,"objet_categorie":objCat,"objet_qte":objQte, "objet_prix":objPrix, "annonce_date_fin":dateFin},
 		dataType: "json",
 		success: (data) => {
-		
-			if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
-				
-				$("#objet_nom").val("");
-				$("#objet_categorie").val("");
-				$("#objet_qte").val("");
-				$("#objet_prix").val("");
-				$("#annonce_date_fin").val("");
-				$("#objet_description").val("");
-				
-				if(data.errCode == 0) {
-					
-					$("#feedback").text("L'annonce a été créée avec succès.");
-					
-				}
-				else {
-					
-					$("#feedback").text("L'annonce n'a pas pu être créée.");
-					
-				}
-			
+			if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data') && data.hasOwnProperty('errMsg')) {
+				if (typeof callbackFunction === 'function') 
+					callbackFunction(data.errCode, data.errMsg, data.data);
 			}
-			
+			else {
+				if(typeof callbackFunction === 'function') {
+					callbackFunction("999","Invalid JSON Format",[]);
+				}
+			}
 		}
 	});
 	
 }
 
-function addPartage() {
-	
-	const annonce_id = $("#annonce_id").val();
-	const acheteur_id = $("#acheteur_id").val();
-	
+function addPartage(annonceID, acheteurID, callbackFunction) {
 	$.ajax({
 		type: "POST",
 		url: CALLBACK_CONNECTION_STRING + "/partage",
-		data: {"annonce_id":annonce_id, "acheteur_id":acheteur_id},
+		data: {"annonce_id":annonceID, "acheteur_id":acheteurID},
 		dataType: "json",
-		success: (data) => {
-		
-			if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
-				
-				if(data.errCode == 0) {
-					
-					$("#feedback").text("Le partage a été effectué avec succès.");
-					
+		done: (data) => {
+			if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data') && data.hasOwnProperty('errMsg')) {
+				if(typeof callbackFunction === 'function') {
+					callbackFunction(data.errCode,data.errMsg,data.data);
 				}
-				else {
-					
-					$("#feedback").text("Le partage n'a pas été effectué avec succès.");
-					
-				}
-			
 			}
-		
+			else {
+				if(typeof callbackFunction === 'function') {
+					callbackFunction("999","Invalid JSON Format",[]);
+				}
+			}
 		}
-	});
-	
+	});	
 }
 
 /*obtient les objets selon les choix dans le filtre et les affichent dans l'accordion.*/
@@ -480,10 +358,15 @@ function searchFilterObjet() {
 		dataType : 'json',
 		data: {name:txtNom, categorie:txtCat}
 	}).done(function(data) {
-		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')) {
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
 		  if(data.errCode == 0) {
 			loadObjetList(data.data);
 		  }
+		}
+		else {
+			/*if(typeof callbackFunction === 'function') {
+				callbackFunction("999","Invalid JSON Format",[]);
+			}*/
 		}
 	});
 }
@@ -496,7 +379,7 @@ function loadMenu(categories,niv,index,parent) {
 		var li = $('<li>');
 		var a = $('<a>')
 		.attr('class', 'dropdown-item')
-		.attr('href','#')
+		.attr('href','annonce.html?categorie=' + categories[i].ncat)
 		.text(categories[i].ncat);
 		if( i + 1 < categories.length && categories[i+1].niveau > niv) {
 			a.addClass('dropdown-toggle');
@@ -512,17 +395,6 @@ function loadMenu(categories,niv,index,parent) {
 		i++;
 	}while(i < categories.length && categories[i].niveau >= niv);
 	return i-1;
-}
-/* remplit le select du filtre.*/
-function loadFiltre(categories) {
-	for(var i = 0; i < categories.length; i++) {
-		var dash = "";
-		for(var k = 0; k < categories[i].niveau - 1; k++) 
-			dash += "--";
-		$('#categorieFilter').append($('<option>', {
-		  value: categories[i].ncat,
-		}).text(dash + categories[i].ncat));
-	}
 }
 
 /*Vide l'accordion et remplit selon le filtre*/
@@ -595,3 +467,34 @@ function createEmptyCard(idobj,name,desc,features) {
 		$('<p>').text('Aucune feature disponible pour cet objet').appendTo(card_body);
 	}
 }
+
+/*!
+ * Bootstrap 4 multi dropdown navbar ( https://bootstrapthemes.co/demo/resource/bootstrap-4-multi-dropdown-navbar/ )
+ * Copyright 2017.
+ * Licensed under the GPL license
+ */
+
+
+function BindNavMenu() {
+    $( '.dropdown-menu a.dropdown-toggle' ).on( 'mouseenter', function ( e ) {
+        var $el = $( this );
+        var $parent = $( this ).offsetParent( ".dropdown-menu" );
+        if ( !$( this ).next().hasClass( 'show' ) ) {
+            $( this ).parents( '.dropdown-menu' ).first().find( '.show' ).removeClass( "show" );
+        }
+        var $subMenu = $( this ).next( ".dropdown-menu" );
+        $subMenu.toggleClass( 'show' );
+        
+        $( this ).parent( "li" ).toggleClass( 'show' );
+
+        $( this ).parents( 'li.nav-item.dropdown.show' ).on( 'hidden.bs.dropdown', function ( e ) {
+            $( '.dropdown-menu .show' ).removeClass( "show" );
+        } );
+        
+         if ( !$parent.parent().hasClass( 'navbar-nav' ) ) {
+            $el.next().css( { "top": $el[0].offsetTop, "left": $parent.outerWidth() - 4 } );
+        }
+
+        return false;
+    } );
+} 

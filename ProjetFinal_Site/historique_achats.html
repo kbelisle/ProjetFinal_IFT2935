@@ -1,7 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="UTF-8"/>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
 		<title>Projet Final Équipe 14 - Historique des achats</title>
 		
 	    <!-- Bootstrap core CSS -->
@@ -10,32 +13,30 @@
 	<body>
 	
 		<!-- Navigation -->
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-		  <div class="container">
-			<a class="navbar-brand" href="#">Projet Final Équipe 14</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-			  <span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarResponsive">
-			  <ul class="navbar-nav ml-auto">
-				<li class="nav-item active">
-				  <a class="nav-link" href="#">Home
-					<span class="sr-only">(current)</span>
-				  </a>
-				</li>
-				<li class="nav-item">
-				  <a class="nav-link" href="#">About</a>
-				</li>
-				<li class="nav-item">
-				  <a class="nav-link" href="#">Services</a>
-				</li>
-				<li class="nav-item">
-				  <a class="nav-link" href="#">Contact</a>
-				</li>
-			  </ul>
-			</div>
-		  </div>
-		</nav>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+         <div class="container">
+            <a class="navbar-brand" href="#">Projet Final Équipe 14</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+               <ul class="navbar-nav ml-auto">
+                  <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Recherche de Partage
+                     </a>
+                     <ul id="parentDropDown" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        
+                     </ul>
+                  </li>
+                  <li class="nav-item active">
+                     <a class="nav-link" href="#">Recherche d'Objet
+                     <span class="sr-only">(current)</span></a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </nav>
 		
 		    <!-- Page Content -->
 		<div class="container">
@@ -73,6 +74,8 @@
 		<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 		<!--PHP API -->
 		<script src="JS/Projet_API.js"></script>
+		<!-- Page JS -->
+		<script src="JS/historique_achats.js"></script>
 		
 	</body>
 </html>
