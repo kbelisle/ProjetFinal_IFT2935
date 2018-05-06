@@ -276,7 +276,7 @@ BEGIN;
 CREATE SEQUENCE projet.objet_id_seq;
 ALTER TABLE projet.objet ALTER COLUMN idobj SET DEFAULT nextval('projet.objet_id_seq');
 ALTER SEQUENCE projet.objet_id_seq OWNED BY projet.objet.idobj;
-SELECT setval('projet.objet_id_seq', 5); --Set this to MAX(id)
+SELECT setval('projet.objet_id_seq', 24); --Set this to MAX(id)
 
 COMMIT;
 
