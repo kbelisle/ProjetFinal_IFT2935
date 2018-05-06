@@ -63,11 +63,25 @@ function addUser($conn, $firstName, $lastName, $email, $address, $preference) {
 	
 	$result = pg_query_params($conn, $query, array($email));
 	
+	if(!$result) {
+
+		pg_close($conn);
+		die (responseJson("5", "Error on post request : utilisateur. ", "[]"));
+		
+	}
+	
 	$id = pg_fetch_assoc($result)["iduser"];
 	
 	$query = 'INSERT INTO projet.prefere (iduser,ncat) VALUES($1,$2)';
 	
 	$result = pg_query_params($conn, $query, array($id, $preference));
+	
+	if(!$result) {
+
+		pg_close($conn);
+		die (responseJson("5", "Error on post request : utilisateur. ", "[]"));
+		
+	}
 	
 }
 
@@ -80,13 +94,20 @@ function addAd($conn, $endDate, $price, $qte, $objectName, $objectDescription, $
 	if(!$result) {
 
 		pg_close($conn);
-		die (responseJson("5", "Error on post request : utilisateur. ", "[]"));
+		die (responseJson("5", "Error on post request : ad. ", "[]"));
 		
 	}
 	
 	$query = 'SELECT idobj FROM projet.objet WHERE name = $1 AND ncat = $2 AND odesc = $3;';
 	
 	$result = pg_query_params($conn, $query, array($objectName, $categoryName, $objectDescription));
+	
+	if(!$result) {
+
+		pg_close($conn);
+		die (responseJson("5", "Error on post request : ad. ", "[]"));
+		
+	}
 	
 	$data = pg_fetch_assoc($result);
 	
@@ -95,6 +116,13 @@ function addAd($conn, $endDate, $price, $qte, $objectName, $objectDescription, $
 	$query = 'INSERT INTO projet.annonce (datefin, prix, qte, idvendeur, idobj) VALUES ($1,$2,$3,$4,$5);';
 	
 	$result = pg_query_params($conn, $query, array($endDate, $price, $qte, $userID, $idobj));
+	
+	if(!$result) {
+
+		pg_close($conn);
+		die (responseJson("5", "Error on post request : ad. ", "[]"));
+		
+	}
 	
 }
 

@@ -16,30 +16,43 @@ function validateAd(event) {
 	const annonce_date_fin = $("#annonce_date_fin").val();
 	const objet_description = $("#objet_description").val();
 	
-	/* TODO : VALIDATION */
-	/* Pour activer le message d'erreur 
-		input.addClass('is-invalid');
-		ex : $("#utilisateur_prenom").addClass('is-invalid');
-	*/
 	/*Clear is-invalid*/
 	$(".form-control.is-invalid").removeClass('is-invalid');
+	
 	var valid = true;
+	
+	if(vendeurID === null) {
+		valid = false;
+		$("#vendeur_id").addClass("is-invalid");
+	}
+	if(objet_nom === "") {
+		valid = false;
+		$("#objet_nom").addClass("is-invalid");
+	}
+	if(objet_categorie === null) {
+		valid = false;
+		$("#objet_categorie").addClass("is-invalid");
+	}
+	if(objet_qte === "" || objet_qte < 0) {
+		valid = false;
+		$("#objet_qte").addClass("is-invalid");
+	}
+	if(objet_prix === "" || objet_prix < 0) {
+		valid = false;
+		$("#objet_prix").addClass("is-invalid");
+	}
 	
 	if(valid) {
 		if(typeof addAd === 'function') {
 			addAd(vendeurID, objet_nom, objet_categorie, objet_qte, objet_prix, annonce_date_fin, objet_description, AfterAddAd);
 		}
 	}
-	else {
-		/* Not Valid */
-	}
-	return valid;
 }
 
 function AfterAddAd(errCode, errMsg, data) {
 	if(errCode == '0') {
 		/* Sucess*/
-		$('#feedback').html("L'annonce a été ajouté."); 
+		$('#feedback').html("L'annonce a été ajoutée."); 
 		$("#vendeur_id").val([]);
 		$("#objet_nom").val('');
 		$("#objet_categorie").val('');

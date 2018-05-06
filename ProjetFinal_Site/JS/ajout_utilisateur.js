@@ -34,19 +34,34 @@ function validateUser(event) {
 		input.addClass('is-invalid');
 		ex : $("#utilisateur_prenom").addClass('is-invalid');
 	*/
-	/*Clear is-invalid*/
+	
+		/*Clear is-invalid*/
 	$(".form-control.is-invalid").removeClass('is-invalid');
+	
 	var valid = true;
 	
-	if(valid) {
-		/*Valid*/
-		addUser(prenom,nom,email,adresse,preference,AfterUserAdd);
-	}
-	else {
-		/*Invalid*/
+	if(prenom === "") {
+	
+		valid = false;
+		$("#utilisateur_prenom").addClass("is-invalid");
 		
 	}
-	return valid;
+	if(nom === "") {
+		
+		valid = false;
+		$("#utilisateur_nom").addClass("is-invalid");
+		
+	}
+	if(email === "") {
+	
+		valid = false;
+		$("#utilisateur_courriel").addClass("is-invalid");
+		
+	}
+	
+	if(valid) {
+		addUser(prenom,nom,email,adresse,preference,AfterUserAdd);
+	}
 }
 
 function AfterUserAdd(errCode,errMsg,data) {

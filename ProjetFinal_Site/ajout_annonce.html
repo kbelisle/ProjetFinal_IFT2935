@@ -20,25 +20,53 @@
 		<!-- Navigation -->
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
          <div class="container">
-            <a class="navbar-brand" href="index.html">Projet Final Équipe 14</a>
+            <a class="navbar-brand" href="#">Projet Final Équipe 14</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                <ul class="navbar-nav ml-auto">
+				  <li class="nav-item">
+					<a class="nav-link" href="historique_achats.html">
+						Histo. achats
+					</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="historique_ventes.html">
+						Histo. ventes
+					</a>
+				  </li>
+				  <li class="nav-item active">
+					<a class="nav-link" href="ajout_annonce.html">
+						Ajout d'annonce
+					</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="ajout_utilisateur.html">
+						Ajout d'utilisateur
+					</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" href="annonce_detail.html">
+						Annonce
+					</a>
+				  </li>
                   <li class="nav-item dropdown">
-                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                     <a class="nav-link dropdown-toggle" href="https://bootstrapthemes.co" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						Recherche de Partage
                      </a>
-                     <ul id="parentDropDown" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink"></ul>
+                     <ul id="parentDropDown" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        
+                     </ul>
                   </li>
                   <li class="nav-item">
-                     <a class="nav-link" href="searchObjet.html">Recherche d'Objet</a>
+                     <a class="nav-link" href="searchObjet.html">Recherche d'Objet
+                     <span class="sr-only">(current)</span></a>
                   </li>
                </ul>
             </div>
          </div>
-      </nav>	
+      </nav>
 		
 		    <!-- Page Content -->
 		<div class="container">
@@ -76,7 +104,7 @@
 						<div class="form-group">
 							<label for="objet_prix">Prix*</label>
 							<input type="number" step="0.01" class="form-control" id="objet_prix" placeholder="Prix">
-							<div class="invalid-feedback">Requis. Prix dpit être supérieur ou égal à 0</div>
+							<div class="invalid-feedback">Requis. Prix doit être supérieur ou égal à 0</div>
 						</div>
 						<div class="form-group">
 							<label for="annonce_date_fin">Date de fin de l'annonce</label>
@@ -87,7 +115,7 @@
 							<textarea class="form-control" id="objet_description"></textarea>
 						</div>
 						
-						<button type="submit" class="btn btn-primary">Submit</button>
+						<button type="submit" class="btn btn-primary">Soumettre</button>
 					</form>
 					
 				</div>
