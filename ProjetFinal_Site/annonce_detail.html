@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Projet Final Équipe 14 - Historique des ventes</title>
+		
+	    <!-- Bootstrap core CSS -->
+		<link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+	
+		<!-- Navigation -->
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+		  <div class="container">
+			<a class="navbar-brand" href="#">Projet Final Équipe 14</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+			  <span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarResponsive">
+			  <ul class="navbar-nav ml-auto">
+				<li class="nav-item active">
+				  <a class="nav-link" href="#">Home
+					<span class="sr-only">(current)</span>
+				  </a>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link" href="#">About</a>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link" href="#">Services</a>
+				</li>
+				<li class="nav-item">
+				  <a class="nav-link" href="#">Contact</a>
+				</li>
+			  </ul>
+			</div>
+		  </div>
+		</nav>
+		
+		    <!-- Page Content -->
+		<div class="container">
+		  <div class="row">
+			<div class="col-lg-12 text-center">
+			  
+				<div id="annonce">
+				
+					<h1 id="annonce_titre" class="mt-5">Annonce #</h1>
+					
+					<div class="input-group mb-3">
+					  <select class="form-control" id="annonce_id"></select>
+					  <div class="input-group-append">
+						<button class="btn btn-outline-secondary" onclick="getAnnonce();" type="button">Rechercher</button>
+					  </div>
+					</div>
+					<p id="feedback"></p>
+					<label for="acheteur_id">Entrez l'ID d'un profiteur pour ajouter un partage en lien avec cette annonce</label>
+					<div class="input-group mb-3">
+					  <select disabled="true" class="form-control" id="acheteur_id"></select>
+					  <div class="input-group-append">
+						<button id="partage_button" disabled="true" class="btn btn-outline-secondary" onclick="addPartage();" type="button">Ajouter partage</button>
+					  </div>
+					</div>
+					
+					<button id="bouton_presentation" disabled="true" class="btn" onclick="getAnnonce();">Présentation</button>
+					<button id="bouton_features" disabled="true" class="btn" onclick="getFeatures();">Fiche technique</button>
+					
+					<div class="text-left" id="annonce_info">
+
+						<p>
+							<strong>Nom de l'objet:</strong>
+							<span id="objet_nom"></span>
+						</p>
+						<p>
+							<strong>Prix de l'objet:</strong>
+							<span id="objet_prix"></span>
+						</p>
+						<p>
+							<strong>Quantité:</strong>
+							<span id="objet_qte"></span>
+						</p>
+						<p>
+							<strong>Date de mise en ligne:</strong>
+							<span id="date_debut"></span>
+						</p>
+						<p>
+							<strong>Date de fin de l'annonce:</strong>
+							<span id="date_fin"></span>
+						</p>
+						<p>
+							<strong>Nom du vendeur:</strong>
+							<span id="vendeur_prenom"></span> <span id="vendeur_nom"></span>
+						</p>
+						<p>
+							<strong>Adresse courriel du vendeur:</strong>
+							<span id="vendeur_courriel"></span>
+						</p>
+						<p>
+							<strong>Adresse du vendeur:</strong>
+							<span id="vendeur_adresse"></strong>
+						</p>
+						<p id="objet_description">
+						
+						</p>
+					</div>
+					
+					<div id="annonce_features" class="text-left">
+					
+					</div>
+					
+				</div>
+			</div>
+		  </div>
+		</div>
+	
+		<!-- Bootstrap core JavaScript -->
+		<script src="vendor/jquery/jquery.min.js"></script>
+		<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<!--PHP API -->
+		<script src="JS/Projet_API.js"></script>
+		
+	</body>
+</html>

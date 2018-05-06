@@ -77,6 +77,164 @@ elseif ($request_count == 1 && $request[0] == "filterSearch" && $method == 'GET'
         die(responseJson("7", "Invalid Input for search", "[]"));
     }
 }
+elseif ($request_count > 0 && $request[0] == "sales") {
+	
+	if($request_count == 2 && $method == "GET") {
+		
+		if(ctype_digit($request[1])) {
+		
+			$data = getSaleHistory($DB, intval($request[1]));
+			pg_close($DB);
+		}
+		else {
+            /* Invalide */
+            pg_close($DB);
+            die(responseJson("4", "Invalid Argument for sales/id", "[]"));
+        }
+		
+	}
+	else {
+        /* Invalide */
+        pg_close($DB);
+        die(responseJson("4", "Invalid Argument for sales", "[]"));
+    }
+}
+elseif ($request_count > 0 && $request[0] == "purchases") {
+	
+	if($request_count == 2 && $method == "GET") {
+		
+		if(ctype_digit($request[1])) {
+		
+			$data = getPurchaseHistory($DB, intval($request[1]));
+			pg_close($DB);
+		}
+		else {
+            /* Invalide */
+            pg_close($DB);
+            die(responseJson("4", "Invalid Argument for purchases/id", "[]"));
+        }
+		
+	}
+	else {
+        /* Invalide */
+        pg_close($DB);
+        die(responseJson("4", "Invalid Argument for purchases", "[]"));
+    }
+}
+elseif ($request_count > 0 && $request[0] == "ad") {
+	
+	if($method == "GET") {
+		
+		if($request_count == 1) {
+		
+			$data = getAllAds($DB);
+			pg_close($DB);
+			
+		}
+		else if($request_count == 2) {
+		
+			if(ctype_digit($request[1])) {
+			
+				$data = getAd($DB, intval($request[1]));
+				pg_close($DB);
+			}
+			else {
+				/* Invalide */
+				pg_close($DB);
+				die(responseJson("4", "Invalid Argument for ad/id", "[]"));
+			}
+		
+		}
+		else {
+			/* Invalide */
+			pg_close($DB);
+			die(responseJson("4", "Invalid Argument for ad", "[]"));
+		}
+		
+	}
+	else if($method == "POST" && sizeof($_POST) == 7) {
+		
+		$objectDescription = $_POST["objet_description"];
+		$endDate = $_POST["annonce_date_fin"];
+		$price = $_POST["objet_prix"];
+		$qte = $_POST["objet_qte"];
+		$objectName = $_POST["objet_nom"];
+		$categoryName = $_POST["objet_categorie"];
+		$userID = $_POST["vendeur_id"];
+		
+		addAd($DB, $endDate, $price, $qte, $objectName, $objectDescription, $userID, $categoryName);
+		
+		$data = '"success"';
+		
+	}
+	
+}
+elseif ($request_count > 0 && $request[0] == "features") {
+		
+	if($request_count == 2 && $method == "GET") {
+	
+		if(ctype_digit($request[1])) {
+		
+			$data = getFeatures($DB, intval($request[1]));
+			pg_close($DB);
+		}
+		else {
+			/* Invalide */
+			pg_close($DB);
+			die(responseJson("4", "Invalid Argument for features/id", "[]"));
+		}
+	
+	}
+	else {
+		/* Invalide */
+		pg_close($DB);
+		die(responseJson("4", "Invalid Argument for features", "[]"));
+	}
+	
+}
+elseif ($request_count > 0 && $request[0] == "partage") {
+	
+	if($request_count == 1 && $method == "POST" && sizeof($_POST) == 2) {
+		
+		$idannonce = $_POST["annonce_id"];
+		$idacheteur = $_POST["acheteur_id"];
+		addPartage($DB, $idannonce, $idacheteur);
+		$data = '"success"';
+		pg_close($DB);
+		
+	}
+	
+}
+elseif ($request_count > 0 && $request[0] == "utilisateur") {
+	
+	if($request_count == 1 && $method == "GET") {
+		
+		$data = getAllUsers($DB);
+		pg_close($DB);
+		
+	}
+	elseif($request_count == 1 && $method = "POST" && sizeof($_POST) == 5) {
+	
+		$firstName = $_POST["prenom"];
+		$lastName = $_POST["nom"];
+		$email = $_POST["email"];
+		$address = $_POST["adresse"];
+		$preference = $_POST["preference"];
+		
+		addUser($DB, $firstName, $lastName, $email, $address, $preference);
+		$data = '"success"';
+		pg_close($DB);
+		
+	}
+	else {
+		error_log(sizeof($_POST));
+		error_log($_POST["preference"]);
+		/* Invalide */
+		pg_close($DB);
+		die(responseJson("4", "Invalid Argument for utilisateur", "[]"));
+	}
+	
+}
 else {
     /*Requete Invalide*/
     pg_close($DB);
