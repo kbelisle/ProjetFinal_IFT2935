@@ -413,4 +413,25 @@ function filterSearch($conn, $name, $cat) {
     return json_encode($data,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_LINE_TERMINATORS);
 }
 
+function searchActiveAnnonceByCategorieAndName($conn,$cat,$name) {
+    $result = pg_query_params("SELECT annonce_actif.idannonce, projet.objet.name, projet.annonce_actif.datedebut,projet.annonce_actif.datefin FROM projet.annonce_actif JOIN projet.objet ON ($1 = '' OR projet.objet.ncat IN ( SELECT projet.getCategorieHierarchy($1))) AND position($2 in LOWER(projet.objet.name)) > 0 AND  projet.annonce_actif.idobj = projet.objet.idobj", array($cat,$name));
+    if (!$result) {
+        $error = pg_last_error($conn);
+        pg_close($conn);
+        if ($error == "") {
+            /*No Result*/
+            return json_encode([],JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_LINE_TERMINATORS);
+        }
+        else {
+            /*Error*/
+            die (responseJson("5", "Error on request : searchActiveAnnonceByCategorieAndName", "[]"));
+        }
+    }
+    $data = pg_fetch_all($result);
+    if(!$data) {
+        $data = [];
+    }
+    return json_encode($data,JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_LINE_TERMINATORS);
+}
+
 ?>

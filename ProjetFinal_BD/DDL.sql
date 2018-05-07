@@ -333,12 +333,3 @@ RETURN QUERY (
 );
 END;
 $$ LANGUAGE plpgsql;
-
-
-/*
-Connection string
-serveur : postgres.iro.umontreal.ca
-port : 5432
-user : belislek_app
-passwd : Projet_final_groupe_14
-*/

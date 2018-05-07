@@ -11,11 +11,11 @@
 
 %Assign document variables
 \date{\today}
-\title{Projet Final;}
+\title{Projet Final}
 \author{tmp}
 \newcommand{\Author}{Kevin Belisle}
 \newcommand{\Authorr}{Michael Leblanc}
-\newcommand{\Authorrr}{Temp}
+\newcommand{\Authorrr}{Leo Jetzer}
 \newcommand{\Teacher}{Michel Boyer}
 \newcommand{\ClassNum}{IFT-2935}
 \newcommand{\ClassName}{Bases de données}
@@ -28,7 +28,7 @@
 \fancyhf{}
 \fancyhead[L]{\@title}
 \fancyhead[R]{\thepage}
-\fancyfoot[L]{Kevin Belisle \& Michael Leblanc \& Temp}
+\fancyfoot[L]{Kevin Belisle \& Michael Leblanc \& Leo Jetzer}
 \fancyfoot[R]{\DateMMMMYYYY}
 \renewcommand{\footrulewidth}{0.4pt}% default is 0pt
 
@@ -45,7 +45,7 @@
 			\textsc{\LARGE \Authorr}\\[0.25cm]
 			\textsc{\normalsize (20005779)}\\[0.25cm]
 			\textsc{\LARGE \Authorrr}\\[0.25cm]
-			\textsc{\normalsize (00000000)}\\[2cm]
+			\textsc{\normalsize (????????)}\\[2cm]
 			
 			\textsc{\normalsize Baccalauréat en informatique}\\
 			\textsc{\normalsize Faculté des arts et des sciences}\\[2.25cm]
@@ -62,13 +62,13 @@
 	\section*{Modèle entité-association}
 	\includegraphics[scale=0.6]{modeleEA.png}
 	\subsection*{Catégorie}
-	TODO
+	Une hierarchie de catégorie/sous-catégorie pour permettre aux utilisateurs de cherche selon une portée plus flexible. Le nom comme clé primaire puisque l'on peut assuré l'unicité d'une ligne avec juste le nom.
 	\subsection*{Objet}
-	TODO
+	Un objet devrait avoir un nom, une description, une catégorie et un dictionnaire de featrues, c'est-à-dire des champs comme ("disque dur", "2 To") pour pemettre la recherche par features (on a pas eu le temps d'implenter cette partie, mais on avait pensé à la faire).
 	\subsection*{Annonce}
-	TODO
+	Une annonce doit contenir un objet, une durée (Date début -> Date Fin), un prix (0 pour don ou >0 pour vendre) et une quantité d'objet disponible puisque nous jugions qu'une annonce (ex : Amazon) avait au moins besoin de ceux-ci au minimum pour fonctionner. On a ajouté une description pour simuler la description de l'objet du style de BestBuy.
 	\subsection*{Utilisateur}
-	TODO
+	Un utilisateur a un nom/prénom pour l'identifié, une adresse email pour le contacter, des préférences pour qu'il puisse être averti si un nouvelle objet de sa catégorie favouri  a été ajouté et une adresse pour savoir où aller chercher les objets de ces annonces. Un utilisateur peut profiter ou présenter des annonces.
 	%Le schéma relationnel de la base%
 	\section*{Schéma relationnel}
 	Utilisateur(\underline{iduser}, prenom, nom, email, adresse)\\
@@ -86,11 +86,15 @@
 	\subsection*{Catégorie}
 	Nous avons choisi le nom de la catégorie (ncat) comme clé primaire puisque c'est le seul et unique champ propre à la table. Le champs pcat réfère à la catégorie parent (NULL si aucun parent) ainsi il est possible de trouver tous les objets faisant partie de la catégorie choisie et de ces enfants.
 	\subsection*{Objet}
-	TODO
-	\subsection*{Annonce}
-	TODO
+	Nous avons choisi d'ajouter un Identifiant unique comme clé primaire (idobj) puisqu'il n'était pas possible de produire une clé primaire à partir de tous les champs (excluant text parce qu'il est très déconseiller d'indexer avec un champs "text"). 
+	\subsection*{Préferé}
+	Nous avons choisi de mettre tous les champs de la table en \begin{verbatim}ON DELETE CASCADE\end{verbatim} puisque si une catégorie ou un utilisateur est supprimé, alors la préférence est incohérente. 
+	\subsection*{Feature}
+	Nous avons choisi de créer une table sépraré pour le champs complexe "Feature" de la table Objet pour éviter de dupliquer les informations d'un objet pour chaque "Features" de celui-ci. Nous avons choisi \begin{verbatim}ON DELETE CASCADE\end{verbatim} sur lid de l'objet, car si on objet est supprimé, alors ces features doivent aussi.
+	\subsection*{Annonce et Partage}
+	Après avoir passé à travers plusieurs itérations d'Annonce et de Partage, nous avons décidé d'avoir une table annonce qui contient un objet (son ID), un vendeur (son ID), une  durée (datefin + datefin), un prix et une quantité. La quantité doivent être non-nulle et plus grand que 0 puisqu'il est incohérent d'avoir une annonce avec moins d'un objet. Pour gérer la notion de don, nous avons choisi l'état 0 ou plus grand que 0 forçant ainsi la colonne prix a être non-nulle. Étant donné que nous travaillons avec de la monnaie dans annonce, on bloque la suppression d'un objet s'il y a une annonce (en ne mettant pas \begin{verbatim}ON DELETE CASCADE\end{verbatim}). La table Partage sert à garder la trace de qui a profité de l'annonce, donc on a besoin d'une annonce (son ID), d'un acheteur (son ID) et une date (pour s'avoir quand que le partage s'est produit). La table partage ressemble beacoup a une table de journal. La clé primaire pour annonce est un ID puisque ne l'on peut pas assuré l'unicité d'une ligne de la table avec tous les champs (on permet une même annonce avec le même objet pendant la même durée, etc.). Pour Partage, il faut les 3 champs pour assurer l'unicité d'une ligne, car un utilisateur peut profiter d'une annonce plusieurs fois. Pour les champs date (datedebut et datefin), on force le format (yyyy-mm-dd) pour l'insertion (la collation de base de la BD du projet).
 	\subsection*{Utilisateur}
-	TODO
+	Nous avons ignoré les formats standard et stocké le tout dans des champs varchar de longueur appropriés puisque les chanps ne sont qu'utilisés à fin d'information et non pas pour faire des requêtes dessus. La table a une colonne ID comme clé primaire pusiqu'il réduisait la charge de travail contre avoir à diviser le email en plusieurs parties, l'indexé et l'utilisé comme clé primaire. Cepedant, on l'a mis unique pour assurer qu'il ne se réinscrit pas plusieurs fois.
 	% L'ensemble des requêtes en SQL et explication du résultat attendu %
 	\section*{Requêtes SQL}
 	\subsection*{Vues}
@@ -192,7 +196,7 @@ Sélectionne les colonnes feature.fname et feature.fvalue de la table feature et
             ON aa.idvendeur = u.iduser;
 	
 	\end{verbatim}
-Sélectionne les colonnes annonce\_actif.idannonce, annonce\_actif.idobj, annonce\_actif.datedebut, annonce\_actif.datefin, annonce\_actif.prix, annonce\_actif.qte, objet.name, objet.ncat, objet.odesc, utilisateur.prenom, utilisateur.nom, utilisateur.email, utilisateur,adresse (renommées respectivement annonce\_id, objet\_id, date\_debut, date\_fin, prix, qte, objet\_nom, objet\_categorie, objet\_description, vendeur\_prenom, vendeur\_nom, vendeur\_email, vendeur\_adresse) de la table résultant de la vue annonce\_actif et des tables objet et utilisateur en spécifiant l'ID de l'annonce.
+Sélectionne les colonnes \texttt{annonce\_actif.idannonce}, \texttt{annonce\_actif.idobj}, \texttt{annonce\_actif.datedebut}, \texttt{annonce\_actif.datefin}, \texttt{annonce\_actif.prix}, \texttt{annonce\_actif.qte}, objet.name, objet.ncat, objet.odesc, utilisateur.prenom, utilisateur.nom, utilisateur.email, utilisateur,adresse (renommées respectivement annonce\_id, objet\_id, date\_debut, date\_fin, prix, qte, objet\_nom, objet\_categorie, objet\_description, vendeur\_prenom, vendeur\_nom, vendeur\_email, vendeur\_adresse) de la table résultant de la vue annonce\_actif et des tables objet et utilisateur en spécifiant l'ID de l'annonce.
 Cette requête sert à obtenir les informations nécessaires en lien avec une annonce qui est toujours active.
 
     \begin{verbatim}
@@ -210,6 +214,70 @@ Sélectionne les colonnes ncat,pcat et niveau de la table categorie\_listing et 
     \end{verbatim}
 Sélectionne toutes les colonnes de la table objet et toutes ses occurences dont l'ID de l'objet vaut \$1.
 
+	\begin{verbatim}
+	SELECT n1cat as "ncat", p1cat as "pcat", niv as "niveau",
+	niv1_parent,niv2_parent,niv3_parent,niv4_parent,niv5_parent
+	FROM (
+	SELECT *,
+	RANK() OVER(ORDER BY niv1_parent NULLS FIRST) as "rank1",
+	RANK() OVER(PARTITION BY niv1_parent ORDER BY niv2_parent NULLS FIRST) as "rank2",
+	RANK() OVER(PARTITION BY niv1_parent,niv2_parent ORDER BY niv3_parent NULLS FIRST) as "rank3",
+	RANK() OVER(PARTITION BY niv1_parent,niv2_parent,niv3_parent ORDER BY niv4_parent NULLS FIRST) as "rank4",
+	RANK() OVER(PARTITION BY niv1_parent,niv2_parent,niv3_parent,niv4_parent ORDER BY niv5_parent NULLS FIRST) as "rank5"
+	FROM (
+	SELECT n1cat, p1cat, niv,
+	CASE WHEN niv = 1 THEN n1cat WHEN niv = 2 THEN n2cat WHEN niv = 3 THEN n3cat WHEN niv = 4 THEN n4cat ELSE p5cat END as "niv1_parent",
+	CASE WHEN niv = 2 THEN n1cat WHEN niv = 3 THEN n2cat WHEN niv = 4 THEN n3cat WHEN niv = 5 THEN p4cat END as "niv2_parent",
+	CASE WHEN niv = 3 THEN n1cat WHEN niv = 4 THEN n2cat WHEN niv = 5 THEN p3cat END as "niv3_parent",
+	CASE WHEN niv = 4 THEN n1cat WHEN niv = 5 THEN p2cat END as "niv4_parent",
+	CASE WHEN niv = 5 THEN n1cat END as "niv5_parent"
+	FROM (
+	SELECT t1.ncat as "n1cat",t2.ncat as "n2cat",t3.ncat as "n3cat",t4.ncat as "n4cat",t5.ncat as "n5cat",
+	t1.pcat as "p1cat",t2.ncat as "p2cat",t3.ncat as "p3cat",t4.ncat as "p4cat",t5.ncat as "p5cat",
+	CASE WHEN t1.pcat IS NULL THEN 1 WHEN t2.pcat IS NULL THEN 2 WHEN t3.pcat IS NULL THEN 3 WHEN t4.pcat IS NULL THEN 4 ELSE 5 END as "niv"
+	FROM projet.categorie t1
+	LEFT JOIN projet.categorie t2 ON t1.pcat = t2.ncat
+	LEFT JOIN projet.categorie t3 ON t2.pcat = t3.ncat
+	LEFT JOIN projet.categorie t4 ON t3.pcat = t4.ncat
+	LEFT JOIN projet.categorie t5 ON t4.pcat = t5.ncat
+	) t ) t
+	ORDER BY rank1,rank2,rank3,rank4,rank5) t;
+	\end{verbatim}
+	Fait partie de la vue categorie\_listing qui affiche dans l'ordre parent enfant en ordre alphabétique de tel sorte que :\\
+	Parent 1\\
+	--Enfant1 (enfant de parent 1)\\
+	----Enfant1.1 (enfant de Enfant 1)\\
+	--Enfant2 (enfant de parent 1)\\
+	Parent 2\\
+	\begin{verbatim}
+	SELECT 
+	annonce_actif.idannonce,
+	projet.objet.name, 
+	projet.annonce_actif.datedebut,
+	projet.annonce_actif.datefin 
+	FROM 
+	projet.annonce_actif 
+	JOIN projet.objet 
+	ON ($1 = '' OR projet.objet.ncat IN ( SELECT projet.getCategorieHierarchy($1))) 
+	AND position($2 in LOWER(projet.objet.name)) > 0 
+	AND  projet.annonce_actif.idobj = projet.objet.idobj
+	\end{verbatim}
+	Utiliser pour le filtre d'objet. Sélectionne toutes les annonces faisant partie d'une annonce active et qui font partie de la hierarchie de la catégorie \$1 et \$2 fait partie du nom de l'objet.
+	\begin{verbatim}
+	SELECT 
+	projet.objet.idobj,
+	name,
+	ncat,
+	odesc,
+	fname,
+	fvalue 
+	FROM 
+	projet.objet 
+	LEFT JOIN projet.feature 
+	ON projet.objet.idobj = projet.feature.idobj 
+	WHERE ncat IN (SELECT projet.getCategorieHierarchy($1)) AND position($2 in LOWER(name)) > 0		
+	\end{verbatim}
+	Utiliser pour le filtre d'objet. Sélectionne toutes les objets faisant partie d'une annonce active et qui font partie de la hierarchie de la catégorie \$1 et \$2 fait partie du nom de l'objet.
     \subsection*{INSERT}
     
     \begin{verbatim}
@@ -237,42 +305,42 @@ Sélectionne toutes les colonnes de la table objet et toutes ses occurences dont
     \end{verbatim}
     Ajoute une nouvelle annonce dans la table annonce. Le ID de l'annonce est généré automatiquement par la base de données.
 
-
-	\subsection*{DML}
-	
-	TODO
 	% Captures d’écran de l’application avec description de fonctionnement de l’application%
 	\section*{Guide Utilisateur}
+	\subsection*{Page d'acceuil}
+	\includegraphics[scale=0.3]{index.png}
+	Page d'acceuil qui affiche les annonces disponibles avec un filtre qui filtre par catégorie et par nom de l'objetde l'annonce. En cliquant sur une annonce ont est rediriger vers la page du detail de l'annonce.
 	\subsection*{Historique des achats}
-	\includegraphics[scale=0.6]{historique\_achats.png}
+	\includegraphics[scale=0.4]{historique_achats.png}
 Il suffit de sélectionner un utilisateur et de cliquer sur le bouton rechercher pour obtenir une liste des achats effectuées par cet utilisateur. Par exemple, vous pouvez sélectionner l'utilisateur ``Sadlq Bahar'' avec l'ID 8.
     \subsection*{Historique des ventes}
-    \includegraphics[scale=0.6]{historique\_ventes.png}
+    \includegraphics[scale=0.4]{historique_ventes.png}
 Il suffit de sélectionner un utilisateur et de cliquer sur le bouton rechercher pour obtenir une liste des ventes effectuées par cet utilisateur. Par exemple, vous pouvez sélectionner l'utilisateur ``Leon Dietrich'' avec l'ID 1.
     \subsection*{Ajout d'annonce}
-    \includegraphics[scale=0.6]{ajout\_annonce.png}
+    \includegraphics[scale=0.4]{creation_annonce.png}
 Il faut tout d'abord sélectionner un utilisateur qui représentera l'annonceur (ou vendeur)
 Les champs ``ID du vendeur'', ``Nom de l'objet'', ``Catégorie de l'objet'', ``Quantité d'objet'' et  ``Prix'' sont requis.
 La quantité de l'objet doit être supérieur à 0 alors que le prix, lui, doit être supérieur ou égal à 0.
 Les autres champs sont factulatifs. Si jamais on entre incorrectement des valeurs dans les champs requis, un message d'erreur s'affiche.
 
     \subsection*{Ajout d'utilisateur}
-    \includegraphics[scale=0.6]{ajout\_utilisateur.png}
+    \includegraphics[scale=0.4]{creation_utilisateur.png}
 Tous les champs sont requis, sauf pour adresse et préférence. Si jamais on entre incorrectement des valeurs dans les champs requis, un message d'erreur s'affiche.
 
     \subsection*{Annonce}
-    \includegraphics[scale=0.6]{annonce.png}
+    \includegraphics[scale=0.4]{annonce.png}
 Tout d'abord, il faut choisir l'ID d'une annonce active. Le champ situé en dessous du titre contient toutes les annonces qui sont actives, donc on ne peut pas se tromper. Une fois l'annonce sélectionné, les informations la concernant sont affichées. Il est possible de naviguer entre la fiche technique de l'objet et la présentation de l'annonce en cliquant sur les boutons appropriés.	
 Dans cette page, on peut aussi simuler un partage en sélectionnant d'un profiteur dans le champ au dessus des boutons ``Présentation'' et ``Fiche technique'' et en cliquant sur le bouton ajouter partage ensuite. Si tout s'est bien passé, un message de confirmation devrait apparaître.
 
     \subsection*{Recherche d'objet}
-    \includegraphics[scale=0.6]{recherche\_objet.png}
+    \includegraphics[scale=0.4]{recherche_objet.png}
 Cette page sert à chercher la description d'un objet. Il suffit de cliquer sur ``Filtre'' pour voir s'afficher deux champs. Le premier correspond à la catégorie de l'objet en question. Le deuxième champ, facultatif permet de faire une recherche par nom de l'objet. Après avoir cliqué sur ``Appliquer'', une liste des objets trouvées devrait apparaître. On peut ensuite cliquer sur un des objets trouvés pour voir sa description. 
 Par exemple, vous pouvez mettre comme catégorie ``Électronique'' et faire une recherche par nom avec le mot clé ``Intel''.
 
     \subsection*{Recherche de partage}
-    TODO
+    Redirige vers la page d'acceuil avec les annonces actives de la catégorie sélectionné
 
-
+	\section*{Application trois niveau}
+	Notre application est une application à trois niveau : Postgres (BD) -> API (PHP) -> Interface Web (HTML + JS). On a utilisé le frameowrk CSS "Bootstrap" nous permettant de se concentrer à faire que le contenu des pages.
 	\end{spacing}                                                 
 \end{document} 

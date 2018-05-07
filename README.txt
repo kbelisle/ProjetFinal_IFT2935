@@ -1,8 +1,7 @@
-Avant de commencer :
+﻿Avant de commencer :
 
 Windows seulement
--Ajouter le répertoire php dans ce répertoire (s'il y a lieu)
--Télécharger php 7.1 et l'ajouter au répertoire php
+-Télécharger php 7.1 et changer les variable d'enviroment pour pointer vers le PHP 7.1
 -Ajouter au répertoire php/ext/ les 3 dlls du répertoire ProjetFinal_API/pgsql
 
 

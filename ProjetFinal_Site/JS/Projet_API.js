@@ -332,8 +332,8 @@ function addPartage(annonceID, acheteurID, callbackFunction) {
 		type: "POST",
 		url: CALLBACK_CONNECTION_STRING + "/partage",
 		data: {"annonce_id":annonceID, "acheteur_id":acheteurID},
-		dataType: "json",
-		done: (data) => {
+		dataType: "json"
+		}).done(function(data) {
 			if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data') && data.hasOwnProperty('errMsg')) {
 				if(typeof callbackFunction === 'function') {
 					callbackFunction(data.errCode,data.errMsg,data.data);
@@ -344,8 +344,7 @@ function addPartage(annonceID, acheteurID, callbackFunction) {
 					callbackFunction("999","Invalid JSON Format",[]);
 				}
 			}
-		}
-	});	
+		});	
 }
 
 /*obtient les objets selon les choix dans le filtre et les affichent dans l'accordion.*/
@@ -379,7 +378,7 @@ function loadMenu(categories,niv,index,parent) {
 		var li = $('<li>');
 		var a = $('<a>')
 		.attr('class', 'dropdown-item')
-		.attr('href','annonce.html?categorie=' + categories[i].ncat)
+		.attr('href','index.html?categorie=' + categories[i].ncat)
 		.text(categories[i].ncat);
 		if( i + 1 < categories.length && categories[i+1].niveau > niv) {
 			a.addClass('dropdown-toggle');
@@ -466,6 +465,26 @@ function createEmptyCard(idobj,name,desc,features) {
 	else {
 		$('<p>').text('Aucune feature disponible pour cet objet').appendTo(card_body);
 	}
+}
+
+function getActiveAnnonceByFilter(cat,name,callbackFunction) {
+	$.ajax({
+		url : CALLBACK_CONNECTION_STRING + "/ad",
+		method: 'GET',
+		dataType : 'json',
+		data: {name:name, cat:cat}
+	}).done(function(data) {
+		if(data.hasOwnProperty('errCode') && data.hasOwnProperty('data')  && data.hasOwnProperty('errMsg')) {
+		  if(typeof callbackFunction === 'function') {
+				callbackFunction(data.errCode,data.errMsh,data.data);
+			}
+		}
+		else {
+			if(typeof callbackFunction === 'function') {
+				callbackFunction("999","Invalid JSON Format",[]);
+			}
+		}
+	});
 }
 
 /*!

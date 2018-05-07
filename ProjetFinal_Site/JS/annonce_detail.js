@@ -3,6 +3,9 @@
 	getAllUserIDs(AfterUserListRetrieve);
 	getAllCategories();
 	$('#annonce_id').on('change', onAnnonceChange);
+	$('#acheteur_id').on('change', function () {
+		$('#partage_button').removeAttr('disabled');
+	});
 });
 
 function AfterUserListRetrieve(errCode,errMsg,data) {
@@ -10,16 +13,23 @@ function AfterUserListRetrieve(errCode,errMsg,data) {
 		$('#acheteur_id').append($("<option>").val(row.iduser).text(row.iduser + " - " + row.prenom + " " + row.nom));
 	});
 	$('#acheteur_id').val([]);
-	$('#acheteur_id').on('change', function (){
-		$('#partage_button').removeAttr('disabled');
-	});
 }
 
 function AfterAnnonceListRetrieve(errCode,errMsg,data) {
 	data.forEach((row) => {			
 		$('#annonce_id').append('<option value="' + row.idannonce + '">' + row.idannonce + '</option>');	
 	});
-	$('#annonce_id').val([]);
+	var url = new URL(window.location.href);
+	var id = url.searchParams.get("id");
+	console.log(id)
+	if(id && $("#annonce_id option[value='"+id+"']").length > 0) {
+		console.log($("#annonce_id option[value='"+id+"']").length);
+		$('#annonce_id').val(id);
+		onAnnonceChange();
+	}
+	else {
+		$('#annonce_id').val([]);
+	}
 }
 
 function onAnnonceChange(event) {
@@ -57,7 +67,7 @@ function AfterAnnonceByIDRetrieve(errCode,errMsg,data) {
 		showAnnonce();
 		
 		$('#acheteur_id').removeAttr('disabled');
-		
+		$('#partage_button').removeAttr('disable');
 	}
 	else {
 		$('#feedback').text("Une erreur s'est lors de l'obtention de l'annonce : " + errMsg);
@@ -80,6 +90,7 @@ function addPartageClick() {
 
 function AfterAddPartage(errCode,errMsg,data) {
 	if(errCode == "0") {
+		console.log('test');
 		$('#feedback').text('Le partage a été ajouté');
 		$('#acheteur_id').val([]);
 	}

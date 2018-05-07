@@ -124,11 +124,15 @@ elseif ($request_count > 0 && $request[0] == "purchases") {
 elseif ($request_count > 0 && $request[0] == "ad") {
 	
 	if($method == "GET") {
-		
 		if($request_count == 1) {
-		
-			$data = getAllAds($DB);
-			pg_close($DB);
+		    if(isset($_GET['cat']) && isset($_GET['name'])) {
+		        $data = searchActiveAnnonceByCategorieAndName($DB, $_GET['cat'], $_GET['name']);
+		        pg_close($DB);
+		    }
+		    else {
+		        $data = getAllAds($DB);
+		        pg_close($DB);
+		    }
 			
 		}
 		else if($request_count == 2) {
